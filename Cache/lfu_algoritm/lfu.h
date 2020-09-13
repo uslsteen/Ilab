@@ -33,7 +33,6 @@ class Cache_t
 private:
     std::list<Cache_item> cache_;
 
-public:
     size_t cap;
 
     // typedef for iterators of map and list
@@ -54,11 +53,13 @@ public:
         cap = 0;
     }
 
+
     bool Look_up(const int elem);
 
+private:
     auto Find_min_used();
 
-    bool Delete_from_cache(ListIt& min_used_elem);
+    bool Delete_from_cache(ListIt min_used_elem);
 
     struct Cache_item Cache_item_construct(int elem);
 };
@@ -66,11 +67,11 @@ public:
 
 auto Cache_t::Find_min_used()
 {
-    ListIt iter = cache_.begin();
+    ListIt iter = cache_.end();
     ListIt min_iter = iter;
     int min_freq = iter->freq;
 
-    for (; iter != cache_.end(); ++iter)
+    for (; iter != cache_.begin(); --iter)
     {
         if (iter->freq < min_freq)
             min_iter = iter;
@@ -79,9 +80,16 @@ auto Cache_t::Find_min_used()
     return min_iter;
 }
 
-bool Cache_t::Delete_from_cache(ListIt& min_used_elem)
+bool Cache_t::Delete_from_cache(ListIt min_used_elem)
 {
-    cache_.erase(min_used_elem);
+    ListIt check_it = cache_.erase(min_used_elem);
+    hash_.erase(min_used_elem->elem);
+
+#if MODE == DEBUG
+
+    std::cout << "Debug cout in delete from cache" << std::endl;
+    std::cout<< "Elem = " << check_it->elem << " Freq = " << check_it->freq << std::endl;
+#endif
 
     return true;
 }
@@ -98,14 +106,14 @@ bool Cache_t::Look_up(const int elem)
         {
             ListIt min_used_elem = Find_min_used();
 
+
+            //Delete_from_cache();
             if (!Delete_from_cache(min_used_elem))
             {
                 printf("Error in deleting from cache!\n");
                 abort();
             }
-            //Delete_from_cache();
 
-            hit->second->freq = 0;
         }
 
         struct Cache_item new_item = {elem, 1};

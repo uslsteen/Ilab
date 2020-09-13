@@ -20,7 +20,8 @@ int main()
 
         assert(std::cin.good());
 
-        if (cache.Look_up(page))
+
+    if (cache.Look_up(page))
             hits += 1;
     }
 
