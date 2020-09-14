@@ -10,135 +10,137 @@
 #include <unordered_map>
 #include <vector>
 
-enum MODE
+enum MODES
 {
     DEBUG = 1,
     RELEASE = 0
 };
 
 
-#define MODE DEBUG
+const int CUR_MODE = DEBUG;
 
+//! structure for combining an element and its frequency
+template <typename KeyT>
 struct Cache_item
 {
-    int elem; // it should be template type
+    KeyT elem; // it should be template type
     int freq;  // param of frequency calls cache_item
 };
 
 
-//template <typename T, typename KeyT = int>
+//! Class for lfu_algorithm
+template <typename T, typename KeyT>
 class Cache_t
 {
-
 private:
-    std::list<Cache_item> cache_;
+
+    std::list<T> cache;
 
     size_t cap;
 
-    // typedef for iterators of map and list
+    //! my old typedef
+    //typedef std::list<T>::iterator ListIt;
+    //typedef std::unordered_map<KeyT, ListIt>::iterator HashIt;
 
-    typedef std::list<Cache_item>::iterator ListIt;
-    typedef std::unordered_map<int, ListIt>::iterator HashIt;
+    using ListIt = typename std::list<T>::iterator;
 
     // structure map, which connect value_type (should be template) and iterator on list
-    std::unordered_map<int, ListIt> hash_;
+    std::unordered_map<KeyT, ListIt> hash_tab;
+
+
 
 public:
 
+    //! Constructor of class
     Cache_t(size_t size) : cap(size)
     {}
 
+    //! Distructor of class
     ~Cache_t()
     {
         cap = 0;
     }
 
 
-    bool Look_up(const int elem);
-
-private:
-    auto Find_min_used();
-
-    bool Delete_from_cache(ListIt min_used_elem);
-
-    struct Cache_item Cache_item_construct(int elem);
-};
-
-
-auto Cache_t::Find_min_used()
-{
-    ListIt iter = cache_.end();
-    ListIt min_iter = iter;
-    int min_freq = iter->freq;
-
-    for (; iter != cache_.begin(); --iter)
+    //! Function for checking the existence of an item in the cache
+    bool Look_up(const KeyT elem)
     {
-        if (iter->freq < min_freq)
-            min_iter = iter;
-    }
+        auto hit = hash_tab.find(elem);
 
-    return min_iter;
-}
-
-bool Cache_t::Delete_from_cache(ListIt min_used_elem)
-{
-    ListIt check_it = cache_.erase(min_used_elem);
-    hash_.erase(min_used_elem->elem);
-
-#if MODE == DEBUG
-
-    std::cout << "Debug cout in delete from cache" << std::endl;
-    std::cout<< "Elem = " << check_it->elem << " Freq = " << check_it->freq << std::endl;
-#endif
-
-    return true;
-}
-
-
-bool Cache_t::Look_up(const int elem)
-{
-    HashIt hit = hash_.find(elem);
-
-    //if hit doesnt exist in map or freq == 0 (it means that elem existed in list in past)
-    if (hit == hash_.end() || (hit->second->freq == 0))
-    {
-        if (cache_.size() == cap)
+        //if hit doesnt exist in map or freq == 0 (it means that elem existed in list in past)
+        if (hit == hash_tab.end() || (hit->second->freq == 0))
         {
-            ListIt min_used_elem = Find_min_used();
-
-
-            //Delete_from_cache();
-            if (!Delete_from_cache(min_used_elem))
+            if (cache.size() == cap)
             {
-                printf("Error in deleting from cache!\n");
-                abort();
+                ListIt min_used_elem = Find_least_used();
+
+
+                //Delete_from_cache();
+                if (!Delete_from_cache(min_used_elem))
+                {
+                    printf("Error in deleting from cache!\n");
+                    abort();
+                }
+
             }
 
+            T new_item = {elem, 1};
+
+            cache.push_front(new_item);
+            hash_tab[elem] = cache.begin();
+
+            if (CUR_MODE == DEBUG)
+            {
+                ListIt iter = cache.begin();
+                std::cout << "Elem = " << iter->elem << " Freq = " << iter->freq << "\n";
+            }
+
+            return false;
+        }
+        //else if hit exist in map =>
+
+        hit->second->freq++;
+
+        if (CUR_MODE == DEBUG)
+            std::cout << "Elem = " << hit->second->elem << " Freq = " << hit->second->freq << "\n";
+
+        return true;
+    }
+
+
+private:
+
+    //! Function for finding least used cache_items
+    auto Find_least_used()
+    {
+        ListIt iter = cache.end();
+        ListIt min_iter = iter;
+        int min_freq = iter->freq;
+
+        for (; iter != cache.begin(); --iter)
+        {
+            if (iter->freq < min_freq)
+                min_iter = iter;
         }
 
-        struct Cache_item new_item = {elem, 1};
-
-        cache_.push_front(new_item);
-        hash_[elem] = cache_.begin();
-
-#if MODE == DEBUG
-
-        ListIt iter = cache_.begin();
-        std::cout << "Elem = " << iter->elem << " Freq = " << iter->freq << "\n";
-#endif
-
-        return false;
+        return min_iter;
     }
-    //else if hit exist in map =>
 
-    hit->second->freq++;
+    //! Function for deleting item from the cache and map
+    bool Delete_from_cache(ListIt min_used_elem)
+    {
+        ListIt check_it = cache.erase(min_used_elem);
+        hash_tab.erase(min_used_elem->elem);
 
-#if MODE == DEBUG
+        if (CUR_MODE == DEBUG)
+        {
+            std::cout << "Debug cout in delete from cache" << std::endl;
+            std::cout << "Elem = " << check_it->elem << " Freq = " << check_it->freq << std::endl;
+        }
 
-    std::cout << "Elem = " << hit->second->elem << " Freq = " << hit->second->freq << "\n";
-#endif
+        return true;
+    }
+};
 
-    return true;
-}
 
 #endif //__LFU_H__
