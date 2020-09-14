@@ -113,11 +113,11 @@ private:
     //! Function for finding least used cache_items
     auto Find_least_used()
     {
-        ListIt iter = cache.end();
+        ListIt iter = cache.begin();
         ListIt min_iter = iter;
         int min_freq = iter->freq;
 
-        for (; iter != cache.begin(); --iter)
+        for (; iter != cache.end(); ++iter)
         {
             if (iter->freq < min_freq)
                 min_iter = iter;
