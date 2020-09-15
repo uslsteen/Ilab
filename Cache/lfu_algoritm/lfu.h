@@ -17,7 +17,7 @@ enum MODES
 };
 
 
-const int CUR_MODE = DEBUG;
+const int CUR_MODE = RELEASE;
 
 //! structure for combining an element and its frequency
 template <typename KeyT>
