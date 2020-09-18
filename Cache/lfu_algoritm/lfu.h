@@ -1,8 +1,9 @@
 //
-// Created by anon on 13.09.2020.
+// Created by anon on 17.09.2020.
 //
-#ifndef __LFU_H__
-#define __LFU_H__
+#ifndef _NEW_LFU_H_
+#define _NEW_LFU_H_
+
 
 #include <iostream>
 #include <cassert>
@@ -13,19 +14,47 @@
 enum MODES
 {
     DEBUG = 1,
-    RELEASE = 0
+    RELEASE = 0,
+    NO_PAGE = -1
 };
 
 
-const int CUR_MODE = RELEASE;
+const int CUR_MODE = DEBUG;
+const int FIRST = 1;
+const int NOT_FIRST = 2;
 
-//! structure for combining an element and its frequency
+
+template <typename KeyT>
+struct Freq_node;
+
+template <typename KeyT>
+struct Cache_item;
+
+template <typename KeyT>
+using FreqIt = typename std::list<Freq_node<KeyT>>::iterator;
+
 template <typename KeyT>
 struct Cache_item
 {
-    KeyT elem; // it should be template type
-    int freq;  // param of frequency calls cache_item
+    KeyT elem;
+    FreqIt<KeyT> Freq_head;
+
+    Cache_item(const KeyT value, FreqIt<KeyT> head) : elem(value),
+                                                      Freq_head(head)
+    {}
 };
+
+template <typename KeyT>
+struct Freq_node
+{
+    std::list<Cache_item<KeyT>> item_list;
+    const int freq_value;
+
+    Freq_node(const int value) : freq_value(value),
+    {
+    }
+};
+
 
 
 //! Class for lfu_algorithm
@@ -34,25 +63,20 @@ class Cache_t
 {
 private:
 
-    std::list<T> cache;
+    std::list<Freq_node<KeyT>> Freq_list;
 
     size_t cap;
 
-    //! my old typedef
-    //typedef std::list<T>::iterator ListIt;
-    //typedef std::unordered_map<KeyT, ListIt>::iterator HashIt;
+    using ListIt = typename std::list<Cache_item<KeyT>>::iterator;
+    using HashIt = typename std::unordered_map<KeyT, ListIt>::iterator;
 
-    using ListIt = typename std::list<T>::iterator;
-
-    // structure map, which connect value_type (should be template) and iterator on list
     std::unordered_map<KeyT, ListIt> hash_tab;
-
-
 
 public:
 
     //! Constructor of class
-    Cache_t(size_t size) : cap(size)
+    Cache_t(size_t size) : cap(size),
+                           Freq_list()
     {}
 
     //! Distructor of class
@@ -62,75 +86,136 @@ public:
     }
 
 
+public:
     //! Function for checking the existence of an item in the cache
     bool Look_up(const KeyT elem)
     {
-        auto hit = hash_tab.find(elem);
+        HashIt hit = hash_tab.find(elem);
 
         //if hit doesnt exist in map or freq == 0 (it means that elem existed in list in past)
-        if (hit == hash_tab.end() || (hit->second->freq == 0))
+        if (hit == hash_tab.end())
         {
-            if (cache.size() == cap)
+            if (hash_tab.size() == cap)
             {
-                ListIt min_used_elem = Find_least_used();
-
-
-                //Delete_from_cache();
-                if (!Delete_from_cache(min_used_elem))
+                if (!Find_least_used())
                 {
-                    printf("Error in deleting from cache!\n");
+                    std::cout << "Error in find_least_used func\n";
                     abort();
                 }
-
+                //comments and debug
             }
 
-            T new_item = {elem, 1};
+            if (!Insert_new_item(elem)
+            {
+                flag = NOT_FIRST;
+                std::cout << "Error in insert_new_item func\n";
+                abort();
+            }
 
-            cache.push_front(new_item);
-            hash_tab[elem] = cache.begin();
-
+            /*
             if (CUR_MODE == DEBUG)
             {
                 ListIt iter = cache.begin();
                 std::cout << "Elem = " << iter->elem << " Freq = " << iter->freq << "\n";
             }
-
+             */
             return false;
         }
         //else if hit exist in map =>
 
-        hit->second->freq++;
-
+        Retie_cache_item(hit);
+/*
         if (CUR_MODE == DEBUG)
             std::cout << "Elem = " << hit->second->elem << " Freq = " << hit->second->freq << "\n";
-
+*/
         return true;
     }
 
 
 private:
 
-    //! Function for finding least used cache_items
-    auto Find_least_used()
+    bool Insert_new_item(const KeyT elem)
     {
-        ListIt iter = cache.begin();
-        ListIt min_iter = iter;
-        int min_freq = iter->freq;
+        //Checking for insertion new freq_node
+        if (Freq_list.empty() || Freq_list.begin().freq_value != 1)
+            Freq_list.push_front(Freq_node<KeyT>(1));
 
-        for (; iter != cache.end(); ++iter)
+        //Insertion new item in item_list
+        FreqIt<KeyT> freq_head = Freq_list.begin();
+        freq_head->item_list.push_front(Cache_item<KeyT>(elem, freq_head));
+
+        //insertion to hash_table
+        ListIt new_item = freq_head->item_list.begin();
+        hash_tab[elem] = new_item;
+
+        return true;
+    }
+
+
+    bool Delete_least_used(ListIt min_used_item, FreqIt<KeyT> min_freq_node)
+    {
+        hash_tab.erase(min_used_item->elem);
+
+        ListIt check_item = min_freq_node->item_list.erase(min_used_item);
+
+        if ((min_freq_node->item_list.begin() == min_freq_node->item_list.end()) & (min_freq_node->freq_value != 1))
         {
-            if (iter->freq < min_freq)
-                min_iter = iter;
+            FreqIt<KeyT> freq_check = Freq_list.erase(min_freq_node);
         }
 
-        return min_iter;
+        return true;
+    }
+
+    //! Function for finding least used cache_items
+    bool Find_least_used()
+    {
+        FreqIt<KeyT> min_freq_node = Freq_list.begin();
+        ListIt min_used_item = min_freq_node->item_list.begin();
+
+        Delete_least_used(min_used_item, min_freq_node);
+
+        return true;
+    }
+
+    bool Retie_cache_item(HashIt hit)
+    {
+        FreqIt<KeyT> current_freq = hit->second->Freq_head;
+        FreqIt<KeyT> next_current_freq = current_freq++;
+
+        if ((current_freq->freq_value + 1) != (next_current_freq->freq_value))
+        {
+            FreqIt<KeyT> it_freq_next = Freq_list.insert(next_current_freq, next_freq(current_freq->freq_value + 1));
+
+            if (!Add_and_delete_item(current_freq, it_freq_next, hit->second))
+            {
+                std::cout << "Error in add and delete func\n";
+                abort();
+            }
+        }
+
+        if (!Add_and_delete_item(current_freq, next_current_freq, hit->second))
+        {
+            std::cout << "Error in add and delete func\n";
+            abort();
+        }
+
+        return true;
+    }
+
+    bool Add_and_delete_item(FreqIt<KeyT> cur_freq, FreqIt<KeyT> next_freq, ListIt it)
+    {
+        cur_freq->item_list.erase(it);
+
+        struct Cache_item<KeyT> new_item(it->elem, next_freq);
+        next_freq->item_list.push_back(new_item);
+
+        return true;
     }
 
     //! Function for deleting item from the cache and map
+    /*
     bool Delete_from_cache(ListIt min_used_elem)
     {
-        ListIt check_it = cache.erase(min_used_elem);
-        hash_tab.erase(min_used_elem->elem);
 
         if (CUR_MODE == DEBUG)
         {
@@ -140,7 +225,55 @@ private:
 
         return true;
     }
+     */
 };
 
+#endif //_NEW_LFU_H_
 
-#endif //__LFU_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

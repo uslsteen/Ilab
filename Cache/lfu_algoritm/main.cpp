@@ -10,13 +10,13 @@ int main()
 
     if (CUR_MODE == RELEASE)
     {
-        if ((in = fopen("/home/anon/ilab/Cache/lfu_algoritm/tests_for_lfu/input.txt", "r")) == nullptr)
+        if ((in = fopen("/home/anon/tests_for_lfu/input.txt", "r")) == nullptr)
         {
             printf("Error in open file \"input.txt\"\n");
             return 0;
         }
 
-        if ((out = fopen("/home/anon/ilab/Cache/lfu_algoritm/tests_for_lfu/output.txt", "w")) == nullptr)
+        if ((out = fopen("/home/anon/tests_for_lfu/output.txt", "w")) == nullptr)
         {
             printf("Error in open \"output.txt\"\n");
             return 0;
@@ -38,11 +38,11 @@ int main()
         std::cin >> num_of_calls;
     }
 
-    Cache_t<Cache_item<int>, int> cache(capacity);
+    Cache_t<int, int> cache(capacity);
+    //Cache_t<Cache_item<int>, int> cache(capacity);
 
     if (CUR_MODE == DEBUG)
         std::cout<< "Input your request:" << std::endl;
-
 
     for (int i = 0; i < num_of_calls; ++i)
     {
