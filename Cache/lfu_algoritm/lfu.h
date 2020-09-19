@@ -18,6 +18,8 @@ enum MODES
     NO_PAGE = -1
 };
 
+#pragma warning (disable:4996)
+
 
 const int CUR_MODE = DEBUG;
 const int FIRST = 1;
@@ -40,7 +42,7 @@ struct Cache_item
     FreqIt<KeyT> Freq_head;
 
     Cache_item(const KeyT value, FreqIt<KeyT> head) : elem(value),
-                                                      Freq_head(head)
+        Freq_head(head)
     {}
 };
 
@@ -50,7 +52,7 @@ struct Freq_node
     std::list<Cache_item<KeyT>> item_list;
     const int freq_value;
 
-    Freq_node(const int value) : freq_value(value),
+    Freq_node(const int value) : freq_value(value)
     {
     }
 };
@@ -76,7 +78,7 @@ public:
 
     //! Constructor of class
     Cache_t(size_t size) : cap(size),
-                           Freq_list()
+        Freq_list()
     {}
 
     //! Distructor of class
@@ -92,7 +94,7 @@ public:
     {
         HashIt hit = hash_tab.find(elem);
 
-        //if hit doesnt exist in map or freq == 0 (it means that elem existed in list in past)
+        //if hit doesnt exist in map
         if (hit == hash_tab.end())
         {
             if (hash_tab.size() == cap)
@@ -105,9 +107,8 @@ public:
                 //comments and debug
             }
 
-            if (!Insert_new_item(elem)
+            if (!Insert_new_item(elem))
             {
-                flag = NOT_FIRST;
                 std::cout << "Error in insert_new_item func\n";
                 abort();
             }
@@ -123,11 +124,11 @@ public:
         }
         //else if hit exist in map =>
 
-        Retie_cache_item(hit);
-/*
-        if (CUR_MODE == DEBUG)
-            std::cout << "Elem = " << hit->second->elem << " Freq = " << hit->second->freq << "\n";
-*/
+        Retie_cache_item(hit->second);
+        /*
+                if (CUR_MODE == DEBUG)
+                    std::cout << "Elem = " << hit->second->elem << " Freq = " << hit->second->freq << "\n";
+        */
         return true;
     }
 
@@ -136,16 +137,17 @@ private:
 
     bool Insert_new_item(const KeyT elem)
     {
+        FreqIt<KeyT> freq_head = Freq_list.begin();
+
         //Checking for insertion new freq_node
-        if (Freq_list.empty() || Freq_list.begin().freq_value != 1)
+        if (Freq_list.empty() || freq_head->freq_value != 1)
             Freq_list.push_front(Freq_node<KeyT>(1));
 
         //Insertion new item in item_list
-        FreqIt<KeyT> freq_head = Freq_list.begin();
-        freq_head->item_list.push_front(Cache_item<KeyT>(elem, freq_head));
+        Freq_list.begin()->item_list.push_front(Cache_item<KeyT>(elem, Freq_list.begin()));
 
         //insertion to hash_table
-        ListIt new_item = freq_head->item_list.begin();
+        ListIt new_item = Freq_list.begin()->item_list.begin();
         hash_tab[elem] = new_item;
 
         return true;
@@ -177,26 +179,31 @@ private:
         return true;
     }
 
-    bool Retie_cache_item(HashIt hit)
+
+
+    bool Retie_cache_item(ListIt item_it)
     {
-        FreqIt<KeyT> current_freq = hit->second->Freq_head;
-        FreqIt<KeyT> next_current_freq = current_freq++;
+        FreqIt<KeyT> current_freq = item_it->Freq_head;
+        FreqIt<KeyT> next_current_freq = ++current_freq;
+        --current_freq;
 
-        if ((current_freq->freq_value + 1) != (next_current_freq->freq_value))
+        if ((next_current_freq != Freq_list.end() && (current_freq->freq_value + 1) == (next_current_freq->freq_value)))
         {
-            FreqIt<KeyT> it_freq_next = Freq_list.insert(next_current_freq, next_freq(current_freq->freq_value + 1));
-
-            if (!Add_and_delete_item(current_freq, it_freq_next, hit->second))
+            if (!Add_and_delete_item(current_freq, next_current_freq, item_it))
             {
                 std::cout << "Error in add and delete func\n";
                 abort();
             }
         }
-
-        if (!Add_and_delete_item(current_freq, next_current_freq, hit->second))
+        else
         {
-            std::cout << "Error in add and delete func\n";
-            abort();
+            FreqIt<KeyT> real_next_freq = Freq_list.insert(next_current_freq, Freq_node<KeyT>(current_freq->freq_value + 1));
+
+            if (!Add_and_delete_item(current_freq, real_next_freq, item_it))
+            {
+                std::cout << "Error in add and delete func\n";
+                abort();
+            }
         }
 
         return true;
@@ -204,10 +211,13 @@ private:
 
     bool Add_and_delete_item(FreqIt<KeyT> cur_freq, FreqIt<KeyT> next_freq, ListIt it)
     {
+        struct Cache_item<KeyT> new_item(it->elem, next_freq);
+
+        hash_tab.erase(it->elem);
         cur_freq->item_list.erase(it);
 
-        struct Cache_item<KeyT> new_item(it->elem, next_freq);
-        next_freq->item_list.push_back(new_item);
+        next_freq->item_list.push_front(new_item);
+        hash_tab[new_item.elem] = next_freq->item_list.begin();
 
         return true;
     }
@@ -216,62 +226,17 @@ private:
     /*
     bool Delete_from_cache(ListIt min_used_elem)
     {
-
         if (CUR_MODE == DEBUG)
         {
             std::cout << "Debug cout in delete from cache" << std::endl;
             std::cout << "Elem = " << check_it->elem << " Freq = " << check_it->freq << std::endl;
         }
-
         return true;
     }
      */
 };
 
 #endif //_NEW_LFU_H_
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -42,7 +42,7 @@ int main()
     //Cache_t<Cache_item<int>, int> cache(capacity);
 
     if (CUR_MODE == DEBUG)
-        std::cout<< "Input your request:" << std::endl;
+        std::cout << "Input your request:" << std::endl;
 
     for (int i = 0; i < num_of_calls; ++i)
     {
@@ -68,10 +68,4 @@ int main()
     else if (CUR_MODE == RELEASE)
         fprintf(out, "Cache hits: %d\n", hits);
 }
-
-
-
-
-
-
 
