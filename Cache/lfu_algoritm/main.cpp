@@ -42,6 +42,9 @@ int main(int argc, char** argv)
 }
 
 
+
+//! Function for testing lfu by simple tests
+
 void Pretty_simple_test()
 {
   int hits = 0;
@@ -68,6 +71,8 @@ void Pretty_simple_test()
   std::cout << "Cache hits = " << hits << "\n";
 }
 
+//! Function checking console arguments
+
 std::string Check_Console_Args(int argc, char** argv)
 {
   std::string name_of_in_file;
@@ -84,6 +89,8 @@ std::string Check_Console_Args(int argc, char** argv)
 
   return name_of_in_file;
 }
+
+//! Function for downloading tests
 
 int Download_test(std::string name_of_in_file, std::vector<int> pages, int& cap_of_cache, int& num_of_calls)
 {
@@ -228,12 +235,4 @@ int main()
     }
 
     if (CUR_MODE == DEBUG)
-        std::cout << "Hits = " << hits << std::endl;
-    else if (CUR_MODE == RELEASE)
-        fprintf(out, "Cache hits: %d\n", hits);
-
-
-    fclose(in);
-    fclose(out);
-}
-*/
+      */
