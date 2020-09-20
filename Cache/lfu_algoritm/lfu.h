@@ -20,9 +20,8 @@ enum MODES
     RELEASE = 0
 };
 
-#pragma warning (disable:4996)
 
-const int CUR_MODE = DEBUG;
+const int CUR_MODE = RELEASE;
 
 //! Decloration of freq_node structure
 template <typename KeyT>
@@ -45,7 +44,7 @@ struct Cache_item
     FreqIt<KeyT> Freq_head;
 
     Cache_item(const KeyT value, FreqIt<KeyT> head) : elem(value),
-                                                      Freq_head(head)
+        Freq_head(head)
     {}
 };
 
@@ -68,12 +67,12 @@ class Cache_t
 {
 private:
 
-//! List of freq_node for lfu algoritm
+    //! List of freq_node for lfu algoritm
     std::list<Freq_node<KeyT>> Freq_list;
 
     size_t cap;
 
-//typedef for std::list
+    //typedef for std::list
     using ListIt = typename std::list<Cache_item<KeyT>>::iterator;
     using HashIt = typename std::unordered_map<KeyT, ListIt>::iterator;
 
@@ -99,17 +98,17 @@ public:
     //! @param[in] pages - vector of elems of request from user (for example any page)
     //! @param[in] num_of_calls
     //! @return quantity of hit
-    int Test_processing(std::vector<int> pages, int num_of_calls)
+    int Test_processing(std::vector<int>& pages, int num_of_calls)
     {
-      int hits = 0;
+        int hits = 0;
 
-      for (int i = 0; i < num_of_calls; ++i)
-      {
-        if (Look_up(pages[i]))
-          hits++;
-      }
+        for (int i = 0; i < num_of_calls; ++i)
+        {
+            if (Look_up(pages[i]))
+                hits++;
+        }
 
-      return hits;
+        return hits;
     }
 
 
@@ -146,7 +145,7 @@ public:
     }
 
 
-//! Block for private methods of class Cahte_t
+    //! Block for private methods of class Cahte_t
 private:
 
 
