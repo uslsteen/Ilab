@@ -1,51 +1,83 @@
 #include "lfu.h"
 
 
+
 void Pretty_simple_test();
 
 std::string Check_Console_Args(int argc, char** argv);
 
-int Download_test(std::string& name_of_in_file, std::vector<int>& pages, int& cap_of_cache, int& num_of_calls);
+void Download_test(std::string& name_of_in_file, std::vector<int>& pages, int& cap_of_cache, int& num_of_calls);
 
 int main(int argc, char** argv)
 {
     int cap_of_cache = 0, num_of_calls = 0;
+    int hits = 0;
 
-    if (CUR_MODE == DEBUG)
+#ifndef CUR_MODE == DEBUG
+    Pretty_simple_test();
+
+#endif
+
+    if (argc > 1)
     {
-      std::cout << "Very simple test by hand" << "\n";
-      Pretty_simple_test();
-    }
+      std::string name_of_in_file = Check_Console_Args(argc, argv);
+      std::vector<int> pages;
 
-    std::string name_of_in_file = Check_Console_Args(argc, argv);
-    std::vector<int> pages;
+      Download_test(name_of_in_file, pages, cap_of_cache, num_of_calls);
+      assert(cap_of_cache > 0);
 
-    Download_test(name_of_in_file, pages, cap_of_cache, num_of_calls);
-    assert(cap_of_cache > 0);
-
-    if (cap_of_cache == 0)
-    {
+      if (cap_of_cache == 0)
+      {
         std::cout << "Something went wrond and you downloaded cap_of_cache == 0\n";
         std::cout << "Is this a bug or a feature?\nCheck your tests in file" << name_of_in_file;
 
         return 0;
-    }
-    else
-    {
+      }
+      else
+      {
         Cache_t<int> cache(cap_of_cache);
 
-        int hits = cache.Test_processing(pages, num_of_calls);
+        hits = cache.Test_processing(pages, num_of_calls);
 
-        std::cout << "Test from file\n";
         std::cout << "Cache hits = " << hits << "\n";
+      }
+
+      return 0;
+  }
+  else if (argc == 1)
+  {
+    #ifndef CUR_MODE == DEBUG
+      std::cout << "Input capacity of cache and number of calls:\n";
+
+    #endif
+
+    std::cin >> cap_of_cache >> num_of_calls;
+
+    Cache_t<int> cache(cap_of_cache);
+
+    for (int i = 0; i < num_of_calls; ++i)
+    {
+      int page = 0;
+
+      #ifndef CUR_MODE == DEBUG
+        std::cout << "Input pages:\n";
+
+      #endif
+      std::cin >> page;
+
+      if (cache.Look_up(page))
+        hits += 1;
     }
 
-    return 0;
+    std::cout << "Hits: " << hits << "\n";
+  }
+  else if (argc < 1)
+  {
+    std::cout << "Lack of arguments!\n";
+    return ERROR;
+  }
 }
 
-
-
-//! Function for testing lfu by simple tests
 
 void Pretty_simple_test()
 {
@@ -73,8 +105,6 @@ void Pretty_simple_test()
     std::cout << "Cache hits = " << hits << "\n";
 }
 
-//! Function checking console arguments
-
 std::string Check_Console_Args(int argc, char** argv)
 {
     std::string name_of_in_file;
@@ -92,16 +122,14 @@ std::string Check_Console_Args(int argc, char** argv)
     return name_of_in_file;
 }
 
-//! Function downloading test
-
-int Download_test(std::string& name_of_in_file, std::vector<int>& pages, int& cap_of_cache, int& num_of_calls)
+void Download_test(std::string& name_of_in_file, std::vector<int>& pages, int& cap_of_cache, int& num_of_calls)
 {
     std::ifstream test_file(name_of_in_file);
 
     if (!test_file.is_open())
     {
         std::cout << "Error with opening file" << name_of_in_file << "\n";
-        return 0;
+        exit(0);
     }
 
     test_file >> cap_of_cache >> num_of_calls;

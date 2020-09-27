@@ -20,8 +20,13 @@ enum MODES
     RELEASE = 0
 };
 
+const int ERROR = -1;
 
-const int CUR_MODE = RELEASE;
+#define CUR_MODE RELEASE
+
+//#pragma warning (disable:4996)
+
+//const int CUR_MODE = RELEASE;
 
 //! Decloration of freq_node structure
 template <typename KeyT>
@@ -125,8 +130,9 @@ public:
         {
             if (hash_tab.size() == cap)
             {
-                ListIt min_used_item = Find_least_used();
-                Delete_least_used(min_used_item, min_used_item->Freq_head);
+                Delete_least_used();
+                //ListIt min_used_item = Find_least_used();
+                //Delete_least_used(min_used_item, min_used_item->Freq_head);
             }
 
             if (!Insert_new_item(elem))
@@ -154,18 +160,15 @@ private:
     //! @return func executed without errors
     bool Insert_new_item(const KeyT elem)
     {
-        FreqIt<KeyT> freq_head = Freq_list.begin();
-
         //Checking for insertion new freq_node
-        if (Freq_list.empty() || freq_head->freq_value != 1)
+        if (Freq_list.empty() || Freq_list.front().freq_value != 1)
             Freq_list.push_front(Freq_node<KeyT>(1));
 
         //Insertion new item in item_list
-        Freq_list.begin()->item_list.push_front(Cache_item<KeyT>(elem, Freq_list.begin()));
+        Freq_list.front().item_list.push_front(Cache_item<KeyT>(elem, Freq_list.begin()));
 
-        //insertion to hash_table
-        ListIt new_item = Freq_list.begin()->item_list.begin();
-        hash_tab[elem] = new_item;
+        //insertion new item to hash_table
+        hash_tab[elem] = Freq_list.front().item_list.begin();
 
         return true;
     }
@@ -174,32 +177,18 @@ private:
     //! Function for deleting item from cache
     //! @param[in] elem - elem of request from user (for example any page)
     //! @return func executed without errors
-    bool Delete_least_used(ListIt min_used_item, FreqIt<KeyT> min_freq_node)
+
+    bool Delete_least_used()
     {
-        hash_tab.erase(min_used_item->elem);
+        hash_tab.erase(Freq_list.front().item_list.front().elem);
+        Freq_list.front().item_list.pop_front();
 
-        ListIt check_item = min_freq_node->item_list.erase(min_used_item);
-
-        if ((min_freq_node->item_list.begin() == min_freq_node->item_list.end()))
-        {
-            FreqIt<KeyT> freq_check = Freq_list.erase(min_freq_node);
-        }
+        if ((Freq_list.front().item_list.begin() == Freq_list.front().item_list.end()))
+            Freq_list.pop_front();
 
         return true;
     }
 
-    //! Function for finding least used cache_items
-    //! @return func executed without errors
-    ListIt Find_least_used()
-    {
-        FreqIt<KeyT> min_freq_node = Freq_list.begin();
-        ListIt min_used_item = min_freq_node->item_list.begin();
-
-        return min_used_item;
-        //Delete_least_used(min_used_item, min_freq_node);
-
-        //return true;
-    }
 
 
 
@@ -245,6 +234,9 @@ private:
 
         hash_tab.erase(item_it->elem);
         cur_freq->item_list.erase(item_it);
+
+        if (cur_freq->item_list.empty())
+            Freq_list.erase(cur_freq);
 
         next_freq->item_list.push_front(new_item);
         hash_tab[new_item.elem] = next_freq->item_list.begin();
