@@ -59,6 +59,5 @@ int main()
 
     Triangle trian1(vec1, vec2, vec3), trian2(vec4, vec5, vec6);
 
-    Intersect_check(trian1, trian2);
-
+    bool res = Intersect_check(trian1, trian2);
 }

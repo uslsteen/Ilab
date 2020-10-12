@@ -28,6 +28,9 @@ public:
 
     //! Calculating distance from point(vector) to plane (without abs)
     //! dist = (r, n) - (r0, n)
+    //!
+    //! \param vec
+    //! \return
     double Dist_to_vec(Vec& vec)
     {
         double dist = (vec & normal) - D;

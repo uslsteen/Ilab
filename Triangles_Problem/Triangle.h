@@ -14,28 +14,41 @@ private:
 
 public:
 
+    //! Constructor for triange with help three vectors
+
     Triangle(Vec& vec1_, Vec& vec2_, Vec& vec3_) : vec1(vec1_),
-                                                vec2(vec2_),
-                                                vec3(vec3_)
+                                                   vec2(vec2_),
+                                                   vec3(vec3_)
     {}
 
     friend bool Intersect_check(Triangle& trian1, Triangle& trian2);
 
 };
 
-void Make_projections(Vec* pnts_buf, Line& line, Vec* prjctions)
+//!
+//! \param pnts_buf
+//! \param line
+//! \param prjctions
+void Make_projection(Vec* pnts_buf, Line& line, Vec* prjctions)
 {
     for (i = 0; i < 3; ++i)
         prjctions[i] = (line.dir & (pnts_buf[i] - line.r0));
 
 }
 
+//!
+//! \param plane
+//! \param points
+//! \param dist
 void Dist_calculation(Plane& plane, double* points, double* dist)
 {
     for (int i = 0; i < 3; ++i)
         dist[i] = plane.Dist_to_vec(points[i]);
 }
 
+//!
+//! \param dist
+//! \return
 bool Dist_checker(double* dist)
 {
     if ((dist[1] > 0 && dist[2] > 0 && dist[3] > 0) || (dist[1] < 0 && dist[2] < 0 && dist[3] < 0))
@@ -44,10 +57,27 @@ bool Dist_checker(double* dist)
     else return true;
 }
 
+//!
+//! \param prjctions
+//! \param dist
+//! \param t_points
 void T_compution(Vec* prjctions, double dist, Vec* t_points)
 {
     for (int i = 0; i < 2; ++i)
         t_points[i] = prjctions[i] + (prjctions[2] - prjctions[i])*((dist[i])/(dist[i] - dist[2]));
+}
+
+
+//!
+//! \param t_points1
+//! \param t_points2
+//! \return
+bool Interval_checking(Vec* t_points1, Vec* t_points2)
+{
+    if ( !(t_points1[0] + t_points2[1]) <= !(t_points1[0] + t_points1[1]) + !(t_points2[0] + t_points2[1]) )
+        return true;
+
+    else return false;
 }
 
 
@@ -61,6 +91,7 @@ bool Intersect_check(Triangle& trian1, Triangle& trian2)
     Vec points1[3] = {trian1.vec1, trian1.vec2, trian1.vec3};
     Vec points2[3] = {trian2.vec1, trian2.vec2, trian2.vec3};
     double dist1[3] = {0, 0, 0};
+    bool res = false;
 
     Dist_calculation(plane1, points2, dist1)
 
@@ -76,7 +107,7 @@ bool Intersect_check(Triangle& trian1, Triangle& trian2)
         {
             if ((trian1.point1 - trian2.point2) & plane1.normal == 0)
             {
-                bool res = Intersect2D(trian1, trian2);
+                res = Intersect2D(trian1, trian2);
                 return res;
             }
             else if ((trian1.point1 - trian2.point2) & plane1.normal != 0)
@@ -100,7 +131,10 @@ bool Intersect_check(Triangle& trian1, Triangle& trian2)
 
         T_compution(prjctions1, dist1, t_points1);
         T_compution(prjctions2, dist2, t_points2);
-        
+
+        res = Interval_checking(t_points1, t_points2);
+
+        return res;
     }
 }
 
