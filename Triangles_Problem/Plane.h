@@ -4,7 +4,7 @@
 #ifndef TRIANGLES_PLANE_H
 #define TRIANGLES_PLANE_H
 
-#include "Triangle.h"
+#include "Line.h"
 
 class Triangle;
 
@@ -18,19 +18,15 @@ private:
 public:
 
     //! Plane constructor with help three points(vectors)
-    Plane(Vec& vec1, Vec& vec2, Vec& vec3)
+    Plane(const Vec& vec1, const Vec& vec2, const Vec& vec3) : normal(((vec3 - vec1) % (vec2 - vec1)).normalize()),
+                                                               D(vec1 & normal)
     {
-        normal = (vec3 - vec1) % (vec2 - vec1);
-        normal.Normalize();
-
-        D = normal & vec1;
     }
 
     //! Calculating distance from point(vector) to plane (without abs)
     //! dist = (r, n) - (r0, n)
-    //!
     //! \param vec
-    //! \return
+    //! \return distance
     double Dist_to_vec(Vec& vec)
     {
         double dist = (vec & normal) - D;
@@ -38,7 +34,25 @@ public:
         return dist;
     }
 
-    friend bool Intersect_check(Triangle& trian1, Triangle& trian2);
+
+    //! Getters for class plane
+    const Vec Get_normal()
+    {
+        return normal;
+    }
+
+    const double Get_D()
+    {
+        return D;
+    }
+
+    void dump(std::ostream& os) const
+    {
+        os << "normal vec = " << normal << ", D = " << D << std::endl;
+    }
+
+
+    Line Plane_intersection(Plane& plane1, Plane& plane2);
 };
 
 #endif //TRIANGLES_PLANE_H
