@@ -9,6 +9,8 @@
 #include <cmath>
 
 
+class Triangle;
+
 class Vec
 {
 private:
@@ -135,7 +137,7 @@ public:
 
     bool operator ==(const Vec& vec)
     {
-        if ((std::fabs(vec.x - x) < epsilon) && (std::fabs(vec.x - x) < epsilon) && (std::fabs(vec.x - x) < epsilon))
+        if ((std::fabs(vec.x - x) < epsilon) && (std::fabs(vec.y - y) < epsilon) && (std::fabs(vec.z - z) < epsilon))
             return true;
         else
             return false;
@@ -144,25 +146,37 @@ public:
 
     //! There is u can find public methods of class vector for working with vector.
 
-    /*
-    const double& get_val(int ind)
+    Vec perp_2D()
+    {
+        return Vec(y, -x, 0);
+    }
+
+
+    double& get_val(int ind)
     {
         return *(&x + ind % 3);
     }
-     */
 
-    double operator [](int index) const
+
+    double operator []( int index ) const
     {
         return *(&x + index % 3);
     }
 
 
-    Vec perp2D()
+    friend std::istream & operator >>( std::istream &ist, Vec &vec );
+
+private:
+
+    double & operator []( int index )
     {
-        return Vec(y, -x, 0);
+        return *(&x + index % 3);
     }
 
-    //! Function for getting norma of the vector
+
+public:
+
+//! Function for getting norma of the vector
     double norma()
     {
         return std::sqrt(x*x + y*y + z*z);
@@ -182,7 +196,12 @@ public:
         return (*this);
     }
 
+    friend bool Intersect_2D(const Triangle &trian1, const Triangle &trian2, const Vec& normal);
+
+
 };
+
+
 
 
 //! Reloading binary opearators as: binary plus, minus, scalar mul and cross mul and output to ostream
@@ -212,6 +231,7 @@ Vec operator +(const Vec& vec_lhs, const Vec& vec_rhs)
 //! \param vec_lhs
 //! \param vec_rhs
 //! \return res of sub
+
 Vec operator -(const Vec& vec_lhs, const Vec& vec_rhs)
 {
     return Vec(vec_lhs.Get_x() - vec_rhs.Get_x(), vec_lhs.Get_y() - vec_rhs.Get_y(), vec_lhs.Get_z() - vec_rhs.Get_z());
@@ -233,6 +253,62 @@ Vec operator %(const Vec& lhs, const Vec& rhs)
 
 
 #endif //TRIANGLES_VEC_H
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /*

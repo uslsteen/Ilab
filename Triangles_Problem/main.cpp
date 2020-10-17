@@ -21,7 +21,7 @@ void Input_trian_coord()
 
 int main()
 {
-    Vec vec1(1, 0, 0), vec2(0, 1, 0), vec3(0, 0, 1), vec4(2, 0, 0.5), vec5(0, 2, 0.5), vec6(0, 0, 0.5);
+    Vec vec1(4, 0, 0), vec2(0, 3, 0), vec3(0, 0, 0), vec4(0, 4, 0), vec5(5, 0, 0), vec6(5, 4, 0);
 
     Triangle trian1(vec1, vec2, vec3), trian2(vec4, vec5, vec6);
 

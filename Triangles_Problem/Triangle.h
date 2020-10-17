@@ -16,7 +16,7 @@ public:
 
     //! Constructor for triange with help three vectors
 
-    Triangle(Vec& vec1_, Vec& vec2_, Vec& vec3_) : vec1(vec1_),
+    Triangle(const Vec& vec1_, const Vec& vec2_, const Vec& vec3_) : vec1(vec1_),
                                                    vec2(vec2_),
                                                    vec3(vec3_)
     {}
@@ -26,28 +26,16 @@ public:
         os << "vec1 = " << vec1 << ", vec2 = " << vec2 << ", vec3 = " << vec3 << std::endl;
     }
 
-    const Vec& get_vec(int ind) const
+    const Vec& operator [](int ind) const
     {
         return *(&vec1 + ind % 3);
     }
 
-    const Vec & operator [] (unsigned idx) const
-    {
-        return *(&vec1 + idx % 3);
-    }
 
-    /*
-    Vec operator [](int ind)
-    {
-        return *()
-    }
-     */
+    bool Intersect_algo(const Triangle& trian1, const Triangle& trian2);
 
-    bool Intersect_algo(Triangle& trian1, Triangle& trian2);
+    friend bool Intersect_2D(const Triangle &trian1, const Triangle &trian2, const Vec& normal);
 
-    bool Intersect_2D(const Triangle& trian1, const Triangle& trian2);
-
-    bool Trian_intersection(const Triangle& trian1, const Triangle& trian2);
 };
 
 
