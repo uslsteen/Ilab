@@ -1,3 +1,0 @@
-/home/anon/ilab/Triangles_Problem/Triangles/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/anon/ilab/Triangles_Problem/Triangles/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/anon/ilab/Triangles_Problem/Triangles/cmake-build-debug/CMakeFiles/Triangles.dir
