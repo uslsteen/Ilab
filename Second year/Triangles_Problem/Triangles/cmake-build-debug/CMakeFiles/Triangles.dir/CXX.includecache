@@ -1,0 +1,46 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/anon/ilab/Triangles_Problem/Triangles/Intersect_algo.cpp
+Intersect_algo.h
+/home/anon/ilab/Triangles_Problem/Triangles/Intersect_algo.h
+
+/home/anon/ilab/Triangles_Problem/Triangles/Intersect_algo.h
+Triangle.h
+/home/anon/ilab/Triangles_Problem/Triangles/Triangle.h
+
+/home/anon/ilab/Triangles_Problem/Triangles/Line.h
+Vector.h
+/home/anon/ilab/Triangles_Problem/Triangles/Vector.h
+
+/home/anon/ilab/Triangles_Problem/Triangles/Plane.h
+Line.h
+/home/anon/ilab/Triangles_Problem/Triangles/Line.h
+
+/home/anon/ilab/Triangles_Problem/Triangles/Triangle.h
+Plane.h
+/home/anon/ilab/Triangles_Problem/Triangles/Plane.h
+
+/home/anon/ilab/Triangles_Problem/Triangles/Vector.h
+iostream
+-
+cmath
+-
+
+/home/anon/ilab/Triangles_Problem/Triangles/main.cpp
+iostream
+-
+Intersect_algo.h
+/home/anon/ilab/Triangles_Problem/Triangles/Intersect_algo.h
+vector
+-
+fstream
+-
+string
+-
+
