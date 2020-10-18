@@ -32,6 +32,7 @@ public:
                           z(vec.z)
     {}
 
+    //! Constuctor of empty vec
     Vec() : x(0),
             y(0),
             z(0)

@@ -23,6 +23,18 @@ public:
     {
     }
 
+    //! Copy constructor of class plane
+    Plane(const Plane& plane) : normal(plane.normal),
+                                D(plane.D)
+    {
+    }
+
+    //! Empty constructor of class plane
+    Plane() : normal(Vec()),
+              D(0)
+    {
+    }
+
     //! Calculating distance from point(vector) to plane (without abs)
     //! dist = (r, n) - (r0, n)
     //! \param vec
@@ -36,12 +48,12 @@ public:
 
 
     //! Getters for class plane
-    const Vec Get_normal()
+    Vec Get_normal()
     {
         return normal;
     }
 
-    const double Get_D()
+    double Get_D()
     {
         return D;
     }
@@ -52,7 +64,7 @@ public:
     }
 
 
-    Line Plane_intersection(Plane& plane1, Plane& plane2);
+    Line Plane_intersection(const Plane& plane1, const Plane& plane2);
 };
 
 #endif //TRIANGLES_PLANE_H

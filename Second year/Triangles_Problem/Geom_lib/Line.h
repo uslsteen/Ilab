@@ -23,12 +23,15 @@ public:
     //! Constructor of line by main dir and origin point(vec)
     Line(Vec& r0_, Vec& dir_) : r0(r0_),
                                 dir(dir_)
-    {}
+    {
+    }
 
     //! Empty constructor of line
     Line(): r0(0, 0, 0),
             dir(0, 0, 0)
-    {}
+    {
+
+    }
 
 
     void Make_projection(Vec* pnts_buf, Line& line, double* prjctions);

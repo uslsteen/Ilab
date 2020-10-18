@@ -6,15 +6,20 @@
 #include <string>
 
 
-void Input_triangles(std::vector<Triangle>& buf_of_trians, std::vector<Vec>& buf_of_points, size_t num_of_triangles)
+void Input_triangles(std::vector<Triangle>& buf_of_trians, std::vector<Vec>& buf_of_points, size_t* num_of_triangles, std::istream &src)
 {
     double x = NAN, y = NAN, z = NAN;
 
-    for (size_t i = 0; i < num_of_triangles; ++i)
+    src >> *num_of_triangles;
+
+    buf_of_trians.resize(*num_of_triangles);
+    buf_of_points.resize(3);
+
+    for (size_t i = 0; i < *num_of_triangles; ++i)
     {
         for (size_t j = 0; j < 3; ++j)
         {
-            std:: cin >> x >> y >> z;
+            src >> x >> y >> z;
             buf_of_points[j] = Vec(x, y, z);
         }
 
@@ -40,18 +45,20 @@ void Intersection_checking(std::vector<Triangle> buf_of_trians, size_t num_of_tr
 
 int main()
 {
+    std::ifstream in;
+
+    in.open("tests/test5.txt");
+
     size_t num_of_triangles = 0;
     std::vector <Triangle> buf_of_trians;
     std::vector <Vec> buf_of_points;
 
-    std::cin >> num_of_triangles;
-
-    buf_of_trians.resize(num_of_triangles);
-    buf_of_points.resize(3);
-
-    Input_triangles(buf_of_trians,buf_of_points, num_of_triangles);
+    Input_triangles(buf_of_trians,buf_of_points, &num_of_triangles, in);
 
     Intersection_checking(buf_of_trians, num_of_triangles);
 
     std::cout << "End of working program!\n";
+    in.close();
+
+    return 0;
 }

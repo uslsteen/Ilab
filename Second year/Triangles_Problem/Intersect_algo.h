@@ -8,29 +8,18 @@
 #include "Geom_lib/Triangle.h"
 
 
-/*
-bool Intersect2D(Triangle& trian1, Triangle& trian2);
-//!
-//! \param pnts_buf
-//! \param line
-//! \param prjctions
-void Make_projection(Vec* pnts_buf, Line& line, Vec* prjctions);
-//!
-//! \param plane
-//! \param points
-//! \param dist
-void Dist_calculation(Plane& plane, double* points, double* dist);
-//! Function for checking sign of distance
-//! \param dist
-//! \return
-bool Dist_checker(double* dist);
-//! Function for checking interval of t_vectors
-//! \param t_points1
-//! \param t_points2
-//! \return
-bool Interval_checking(Vec* t_points1, Vec* t_points2);
-bool Intersect_algos(Triangle& trian1, Triangle& trian2);
-*/
+//! My swap
+//! \param x
+//! \param y
+template <typename T>
+void swap(T* x, T* y)
+{
+    double temp = *y;
+    *y = *x;
+    *x = temp;
+}
+
+                                        //! Start block of 2D intersection !//
 
 
 int Get_mid_index(int i0, int i1, int N)
@@ -73,7 +62,11 @@ int Get_extreme_index(const Triangle& trian, const Vec& pt)
     }
 }
 
-
+//! Function for finding max index
+//! \param a
+//! \param b
+//! \param c
+//! \return max index
 int Find_max_ind(double a, double b, double c)
 {
     int ind = 0;
@@ -97,6 +90,10 @@ int Find_max_ind(double a, double b, double c)
 }
 
 
+//! Function for checking 2D intersection
+//! \param trian1
+//! \param trian2
+//! \return
 bool Test_intersection(const Triangle& trian1, const Triangle& trian2)
 {
     for (int i0 = 0, i1 = 2; i0 < 3; i1 = i0, ++i0)
@@ -115,7 +112,11 @@ bool Test_intersection(const Triangle& trian1, const Triangle& trian2)
 }
 
 
-
+//! Function for checking 2D intersection
+//! \param trian1
+//! \param trian2
+//! \param normal
+//! \return true or false
 bool Intersect_2D(const Triangle &trian1, const Triangle &trian2, const Vec& normal)
 {
     double  Oxy = std::abs(normal & Vec(0, 0, 1)),
@@ -146,8 +147,15 @@ bool Intersect_2D(const Triangle &trian1, const Triangle &trian2, const Vec& nor
                              Triangle(new_trian2[0], new_trian2[1], new_trian2[2]));
 }
 
+                                        //!*** End block of 2D intersection ***!//
 
 
+                                        //!*** Start block of 3D intersection ***!//
+
+
+//! Function for checking sign of the distance
+//! \param dist
+//! \return true of false
 bool Dist_checker(double* dist)
 {
     if ((dist[0] > 0 && dist[1] > 0 && dist[2] > 0) || (dist[0] < 0 && dist[1] < 0 && dist[2] < 0))
@@ -157,7 +165,10 @@ bool Dist_checker(double* dist)
         return true;
 }
 
-
+//! Function for calculating t_points
+//! \param prjctions
+//! \param dist
+//! \param t_points
 void T_compution(double* prjctions, double* dist, double* t_points)
 {
     for (int i = 0; i < 2; ++i)
@@ -165,14 +176,10 @@ void T_compution(double* prjctions, double* dist, double* t_points)
 }
 
 
-void swap(double* x, double* y)
-{
-    double temp = *y;
-    *y = *x;
-    *x = temp;
-}
-
-
+//! Function for checking condition of the intervals
+//! \param t_points1
+//! \param t_points2
+//! \return true or false
 bool Interval_checking(double* t_points1, double* t_points2)
 {
     if (t_points1[0] > t_points1[1])
@@ -189,7 +196,10 @@ bool Interval_checking(double* t_points1, double* t_points2)
 }
 
 
-
+//! Function for calculation distance from points to the plane
+//! \param plane
+//! \param points
+//! \param dist
 void Dist_calculation(Plane& plane, Vec* points, double* dist)
 {
     for (int i = 0; i < 3; ++i)
@@ -197,6 +207,10 @@ void Dist_calculation(Plane& plane, Vec* points, double* dist)
 }
 
 
+//! Function for making projections points on the line
+//! \param pnts_buf
+//! \param line
+//! \param prjctions
 void Line::Make_projection(Vec* pnts_buf, Line& line, double* prjctions)
 {
     for (int i = 0; i < 3; ++i)
@@ -204,8 +218,11 @@ void Line::Make_projection(Vec* pnts_buf, Line& line, double* prjctions)
 
 }
 
-
-Line Plane::Plane_intersection(Plane& plane1, Plane& plane2)
+//! Function for finding line as intersection two planes
+//! \param plane1
+//! \param plane2
+//! \return new line
+Line Plane::Plane_intersection(const Plane& plane1, const Plane& plane2)
 {
     Vec n1 = plane1.normal, n2 = plane2.normal;
     Vec dir = n1 % n2;
@@ -221,6 +238,14 @@ Line Plane::Plane_intersection(Plane& plane1, Plane& plane2)
     return Line(r0, dir);
 }
 
+
+//! Function for checking 3D intersection
+//! \param plane1
+//! \param plane2
+//! \param points1
+//! \param points2
+//! \param dist1
+//! \return true or false
 bool Intersect_3D(Plane& plane1, Plane& plane2, Vec* points1, Vec* points2, double* dist1)
 {
     double dist2[3] = {0, 0, 0};
@@ -235,7 +260,7 @@ bool Intersect_3D(Plane& plane1, Plane& plane2, Vec* points1, Vec* points2, doub
     double t_points1[2], t_points2[2], prjctions1[3], prjctions2[3];
 
     line_intsct.Make_projection(points1, line_intsct, prjctions1);
-    line_intsct.Make_projection(points1, line_intsct, prjctions2);
+    line_intsct.Make_projection(points2, line_intsct, prjctions2);
 
     T_compution(prjctions1, dist1, t_points1);
     T_compution(prjctions2, dist2, t_points2);
@@ -245,50 +270,12 @@ bool Intersect_3D(Plane& plane1, Plane& plane2, Vec* points1, Vec* points2, doub
     return res;
 }
 
+                                        //!*** End block of 3D intersection ***!//
 
-/*
-bool Intersect_algo(const Triangle& trian1, const Triangle& trian2)
-{
-    Plane plane1(trian1.vec1, trian1.vec2, trian1.vec3);
-    Vec n1 = plane1.Get_normal();
-
-    Vec points1[3] = {trian1.vec1, trian1.vec2, trian1.vec3};
-    Vec points2[3] = {trian2.vec1, trian2.vec2, trian2.vec3};
-
-    double dist1[3] = {0, 0, 0};
-
-    bool res = false;
-
-    Dist_calculation(plane1, points2, dist1);
-
-    if (!Dist_checker(dist1))
-        return false;
-
-    else
-    {
-        Plane plane2(trian2.vec1, trian2.vec2, trian2.vec3);
-        Vec n2 = plane2.Get_normal();
-
-        if ((n1 % n2) == Vec(0, 0, 0))
-        {
-            if (((trian1.vec1 - trian2.vec1) & n1) == 0)
-            {
-                res = Intersect_2D(trian1, trian2, plane1.Get_normal());
-                return res;
-            }
-            else if (((trian1.vec1 - trian2.vec1) & n1) != 0)
-                return false;
-        }
-
-        res = Intersect_3D(plane1, plane2, points1, points2, dist1);
-    }
-
-    return res;
-}
-*/
-
-
-
+//! Main function of intersectin algo
+//! \param trian1
+//! \param trian2
+//! \return true or false
 bool Intersect_algo(const Triangle& trian1, const Triangle& trian2)
 {
     Vec points1[3] = {trian1[0], trian1[1], trian1[2]};
@@ -327,8 +314,6 @@ bool Intersect_algo(const Triangle& trian1, const Triangle& trian2)
 
     return res;
 }
-
-
 
 
 
