@@ -1,1 +1,0 @@
-/usr/bin/g++  -g   CMakeFiles/Triangles_vers_2.dir/main.cpp.o CMakeFiles/Triangles_vers_2.dir/Intersect_algo.cpp.o  -o Triangles_vers_2 

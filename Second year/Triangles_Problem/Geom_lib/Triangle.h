@@ -1,3 +1,4 @@
+
 //
 // Created by anon on 11.10.2020.
 //
@@ -17,8 +18,8 @@ public:
     //! Constructor for triange with help three vectors
 
     Triangle(const Vec& vec1_, const Vec& vec2_, const Vec& vec3_) : vec1(vec1_),
-                                                   vec2(vec2_),
-                                                   vec3(vec3_)
+                                                                     vec2(vec2_),
+                                                                     vec3(vec3_)
     {}
 
     void dump(std::ostream& os) const

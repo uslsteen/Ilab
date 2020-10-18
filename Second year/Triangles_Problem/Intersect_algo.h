@@ -5,37 +5,30 @@
 #ifndef __INTERSECT_ALGO_H__
 #define __INTERSECT_ALGO_H__
 
-#include "Triangle.h"
+#include "Geom_lib/Triangle.h"
 
 
 /*
 bool Intersect2D(Triangle& trian1, Triangle& trian2);
-
 //!
 //! \param pnts_buf
 //! \param line
 //! \param prjctions
 void Make_projection(Vec* pnts_buf, Line& line, Vec* prjctions);
-
 //!
 //! \param plane
 //! \param points
 //! \param dist
 void Dist_calculation(Plane& plane, double* points, double* dist);
-
-
 //! Function for checking sign of distance
 //! \param dist
 //! \return
 bool Dist_checker(double* dist);
-
-
 //! Function for checking interval of t_vectors
 //! \param t_points1
 //! \param t_points2
 //! \return
 bool Interval_checking(Vec* t_points1, Vec* t_points2);
-
 bool Intersect_algos(Triangle& trian1, Triangle& trian2);
 */
 
@@ -157,7 +150,7 @@ bool Intersect_2D(const Triangle &trian1, const Triangle &trian2, const Vec& nor
 
 bool Dist_checker(double* dist)
 {
-    if ((dist[1] > 0 && dist[2] > 0 && dist[3] > 0) || (dist[1] < 0 && dist[2] < 0 && dist[3] < 0))
+    if ((dist[0] > 0 && dist[1] > 0 && dist[2] > 0) || (dist[0] < 0 && dist[1] < 0 && dist[2] < 0))
         return false;
 
     else

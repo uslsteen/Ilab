@@ -27,7 +27,7 @@ public:
     //! dist = (r, n) - (r0, n)
     //! \param vec
     //! \return distance
-    double Dist_to_vec(Vec& vec)
+    double Dist_to_vec(const Vec& vec)
     {
         double dist = (vec & normal) - D;
 

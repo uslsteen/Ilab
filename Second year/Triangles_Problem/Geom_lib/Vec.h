@@ -247,7 +247,7 @@ Vec operator %(const Vec& lhs, const Vec& rhs)
 {
     double x1 = lhs.Get_x(), y1 = lhs.Get_y(), z1 = lhs.Get_z(), x2 = rhs.Get_x(), y2 = rhs.Get_y(), z2 = rhs.Get_z();
 
-    return Vec(y1*z2 - y2*z1, x1*z2 - x2*z1, x1*y2 - x2*y1);
+    return Vec(y1*z2 - y2*z1, x2*z1 - x1*z2, x1*y2 - x2*y1);
 }
 
 
