@@ -19,6 +19,12 @@ void swap(T* x, T* y)
     *x = temp;
 }
 
+template <typename T>
+int sgn(T val)
+{
+    return (T(0) <= val) - (T(0) > val);
+}
+
                                         //! Start block of 2D intersection !//
 
 
@@ -239,6 +245,22 @@ Line Plane::Plane_intersection(const Plane& plane1, const Plane& plane2)
 }
 
 
+void Compare_and_swap(double* dist, double* prjctions)
+{
+    if (sgn(dist[1]) == sgn(dist[2]))
+    {
+        std::swap(dist[2], dist[0]);
+        std::swap(prjctions[2], prjctions[0]);
+
+    }
+    else if (sgn(dist[0]) == sgn(dist[2]))
+    {
+        std::swap(dist[2], dist[1]);
+        std::swap(prjctions[2], prjctions[1]);
+    }
+
+}
+
 //! Function for checking 3D intersection
 //! \param plane1
 //! \param plane2
@@ -261,6 +283,9 @@ bool Intersect_3D(Plane& plane1, Plane& plane2, Vec* points1, Vec* points2, doub
 
     line_intsct.Make_projection(points1, line_intsct, prjctions1);
     line_intsct.Make_projection(points2, line_intsct, prjctions2);
+
+    Compare_and_swap(dist1, prjctions1);
+    Compare_and_swap(dist2, prjctions2);
 
     T_compution(prjctions1, dist1, t_points1);
     T_compution(prjctions2, dist2, t_points2);
@@ -319,3 +344,4 @@ bool Intersect_algo(const Triangle& trian1, const Triangle& trian2)
 
 
 #endif //TRIANGLES_INTERSECT_ALGO_H
+

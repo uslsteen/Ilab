@@ -45,20 +45,25 @@ void Intersection_checking(std::vector<Triangle> buf_of_trians, size_t num_of_tr
 
 int main()
 {
+    /*
+    If you want input from the file, uncoment this code
     std::ifstream in;
 
-    in.open("tests/test5.txt");
+    in.open("tests/test1.txt");
+    */
 
     size_t num_of_triangles = 0;
     std::vector <Triangle> buf_of_trians;
     std::vector <Vec> buf_of_points;
 
-    Input_triangles(buf_of_trians,buf_of_points, &num_of_triangles, in);
+    /*If you want input from the file, rewrite in instead std::cin*/
+    Input_triangles(buf_of_trians,buf_of_points, &num_of_triangles, std::cin);
 
     Intersection_checking(buf_of_trians, num_of_triangles);
 
     std::cout << "End of working program!\n";
-    in.close();
+
+    //! in.close();
 
     return 0;
 }
