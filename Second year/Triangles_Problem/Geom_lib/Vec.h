@@ -198,10 +198,9 @@ public:
     friend bool Intersect_2D(const Triangle &trian1, const Triangle &trian2, const Vec& normal);
 
 
+
+
 };
-
-
-
 
 //! Reloading binary opearators as: binary plus, minus, scalar mul and cross mul and output to ostream
 

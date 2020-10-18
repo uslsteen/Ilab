@@ -246,9 +246,8 @@ bool Intersect_3D(Plane& plane1, Plane& plane2, Vec* points1, Vec* points2, doub
 }
 
 
-
-
-bool Triangle::Intersect_algo(const Triangle& trian1, const Triangle& trian2)
+/*
+bool Intersect_algo(const Triangle& trian1, const Triangle& trian2)
 {
     Plane plane1(trian1.vec1, trian1.vec2, trian1.vec3);
     Vec n1 = plane1.Get_normal();
@@ -286,6 +285,49 @@ bool Triangle::Intersect_algo(const Triangle& trian1, const Triangle& trian2)
 
     return res;
 }
+*/
+
+
+
+bool Intersect_algo(const Triangle& trian1, const Triangle& trian2)
+{
+    Vec points1[3] = {trian1[0], trian1[1], trian1[2]};
+    Vec points2[3] = {trian2[0], trian2[1], trian2[2]};
+
+    Plane plane1(points1[0], points1[1], points1[2]);
+    Vec n1 = plane1.Get_normal();
+
+    double dist1[3] = {0, 0, 0};
+
+    bool res = false;
+
+    Dist_calculation(plane1, points2, dist1);
+
+    if (!Dist_checker(dist1))
+        return false;
+
+    else
+    {
+        Plane plane2(points2[0], points2[1], points2[2]);
+        Vec n2 = plane2.Get_normal();
+
+        if ((n1 % n2) == Vec(0, 0, 0))
+        {
+            if (((points1[0] - points2[0]) & n1) == 0)
+            {
+                res = Intersect_2D(trian1, trian2, plane1.Get_normal());
+                return res;
+            }
+            else if (((points1[0] - points2[0]) & n1) != 0)
+                return false;
+        }
+
+        res = Intersect_3D(plane1, plane2, points1, points2, dist1);
+    }
+
+    return res;
+}
+
 
 
 
