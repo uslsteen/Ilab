@@ -5,7 +5,7 @@
 #include <fstream>
 #include <string>
 
-//I test my git
+//I test my git!!!
 
 void Input_triangles(std::vector<Triangle>& buf_of_trians, std::vector<Vec>& buf_of_points, size_t* num_of_triangles, std::istream &src)
 {
