@@ -231,7 +231,8 @@ void Line::Make_projection(Vec* pnts_buf, Line& line, double* prjctions)
 Line Plane::Plane_intersection(const Plane& plane1, const Plane& plane2)
 {
     Vec n1 = plane1.normal, n2 = plane2.normal;
-    Vec dir = n1 % n2;
+    Vec dir = n2 % n1;
+    //Vec dir = (plane1.normal) % (plane2.normal);
 
     double D1 = plane1.D, D2 = plane2.D;
     double n1_scl_n2 = n1 & n2, n1_scl_n1 = n1 & n1, n2_scl_n2 = n2 & n2;
@@ -284,11 +285,11 @@ bool Intersect_3D(Plane& plane1, Plane& plane2, Vec* points1, Vec* points2, doub
     line_intsct.Make_projection(points1, line_intsct, prjctions1);
     line_intsct.Make_projection(points2, line_intsct, prjctions2);
 
-    Compare_and_swap(dist1, prjctions1);
-    Compare_and_swap(dist2, prjctions2);
+    Compare_and_swap(dist2, prjctions1);
+    Compare_and_swap(dist1, prjctions2);
 
-    T_compution(prjctions1, dist1, t_points1);
-    T_compution(prjctions2, dist2, t_points2);
+    T_compution(prjctions1, dist2, t_points1);
+    T_compution(prjctions2, dist1, t_points2);
 
     bool res = Interval_checking(t_points1, t_points2);
 
