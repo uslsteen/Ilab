@@ -20,7 +20,7 @@ namespace AdamR
         private:
 
             //! Num of rows and columns of my matrix
-            int rows, clmns;
+            uint rows, clmns;
 
             //! Perfomance of my matrix
             Data** matrix;
@@ -118,10 +118,17 @@ namespace AdamR
 
             //! Copy constructor for class Matrix
             Matrix(const Matrix<Data>& rhs) : rows(rhs.rows),
-                                              clmns(rhs.clmns),
-                                              matrix(rhs.matrix)
+                                              clmns(rhs.clmns)
             {
-                // ??????????????????????????????????
+                matrix = new Data* [rhs.rows];
+
+                for (int i = 0; i < rhs.rows; ++i)
+                {
+                    matrix[i] = new Data [rhs.clmns];
+
+                    for (int j = 0; j < rhs.clmns; ++j)
+                        matrix[i][j] = rhs.matrix[i][j];
+                }
             }
 
 
@@ -310,15 +317,74 @@ namespace AdamR
 
     public:
 
-        /*
+
+            Data Diag_mul(const Matrix& mtr)
+            {
+                assert(mtr.rows == mtr.clmns);
+                assert(mtr.matrix);
+                Data res = 1;
+
+                for (int i = 0; i < mtr.rows; ++i)
+                    res *= static_cast<double>(mtr.matrix[i][i]);
+
+                return res;
+            }
+
+        // приведение матрицы к треугольному виду, метод Гаусса  с главным элементом
+            Data detemrinant()
+            {
+                assert((*this).clmns == (*this).rows);
+                assert((*this).matrix);
+
+                int swap_counter = 1;
+                uint rows = (*this).rows, clmns = (*this).clmns;
+                Matrix<Data> tmp_mtr{(*this)};
+
+                for (size_t i = 0; i < rows; ++i)
+                {
+                    size_t max_ind = i;
+
+                    for (size_t j = i + 1; j < rows; ++ j)
+                        if (abs(tmp_mtr.matrix[j][i]) > abs(tmp_mtr.matrix[max_ind][i]))
+                            max_ind = j;
+
+                    if (abs (tmp_mtr.matrix[max_ind][i]) < EPSILON)
+                        continue;
+
+                    for (size_t k = 0; k < tmp_mtr.clmns; ++k)
+                        std::swap (tmp_mtr.matrix[i][k], tmp_mtr.matrix[max_ind][k]);
+
+                    swap_counter = - swap_counter * (i != max_ind ? 1 : - 1);
+
+                    //  вычитаем текущую строку из всех остальных
+                    for (size_t j = i + 1; j < rows; ++j)
+                    {
+                        double q = - (static_cast<double>(tmp_mtr.matrix[j][i]) )/( static_cast<double>(tmp_mtr.matrix[i][i]));
+
+                        for (size_t k = 0; k < clmns; k++)
+                            tmp_mtr[j][k] += q * tmp_mtr[i][k];
+                    }
+                }
+
+                Data res = swap_counter*Diag_mul(tmp_mtr);
+
+                return res;
+            }
+
+
             //! Function for trannsposing matrix
             void transposition()
             {
-                Resize(*this);
+                Matrix<Data> tmp_mtr{(*this)};
+                Resize(clmns, rows);
 
+                for (int i = 0; i < clmns; ++i)
+                {
+                    for(int j = 0; j < rows; ++j)
+                        matrix[i][j] = tmp_mtr[j][i];
 
+                }
             }
-            */
 
 
             void dump(std::ostream& os) const
@@ -337,29 +403,34 @@ namespace AdamR
 
                 std::cout << std::endl;
             }
-
-
-
     };
 
     template <typename Data>
     Matrix<Data> operator +(const Matrix<Data>& lhs, const Matrix<Data> rhs)
     {
+        Matrix<Data> res{lhs};
 
+        res += rhs;
+        return res;
     }
 
     template <typename Data>
     Matrix<Data> operator -(const Matrix<Data>& lhs, const Matrix<Data> rhs)
     {
+        Matrix<Data> res{lhs};
 
+        res -= rhs;
+        return res;
     }
 
     template <typename Data>
     Matrix<Data> operator *(const Matrix<Data>& lhs, const Matrix<Data>& rhs)
     {
+        Matrix<Data> res{lhs};
 
+        res *= rhs;
+        return res;
     }
-
 
 }
 
