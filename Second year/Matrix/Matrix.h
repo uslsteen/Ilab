@@ -1,7 +1,6 @@
 //
 // Created by anon on 10.11.2020.
 //
-
 #ifndef __MATRIX_H__
 #define __MATRIX_H__
 
@@ -9,7 +8,6 @@
 #include <vector>
 #include <cassert>
 #include <math.h>
-
 
 
 namespace AdamR
@@ -39,7 +37,7 @@ namespace AdamR
             }
 
             Matrix(int rows_, int clmns_) : rows(rows_),
-                                              clmns(clmns_)
+                                            clmns(clmns_)
             {
                 assert(rows_*clmns_ != 0);
 
@@ -60,9 +58,7 @@ namespace AdamR
             Matrix(uint rows_, uint clmns_, Data val = Data{}) : rows(rows_),
                                                                  clmns(clmns_)
             {
-                if (rows * clmns == 0)
-                    return;
-
+                assert(rows_ * clmns_ != 0);
                 matrix = new Data* [rows];
 
                 for (size_t i = 0; i < rows; ++i)
@@ -75,20 +71,43 @@ namespace AdamR
 
             }
 
-            //! Constructor class matrix of vector
+            Matrix(uint rows_, uint clmns_, std::vector<Data>& buffer) : rows(rows_),
+                                                                         clmns(clmns_)
+            {
+                assert(rows_ * clmns_ != 0);
+
+                size_t num_of_elems = buffer.size(), cnter = 0;
+                matrix = new Data* [rows];
+
+                for (size_t i = 0; i < rows; ++i)
+                {
+                    if (cnter == num_of_elems - 1)
+                        return;
+
+                    matrix[i] = new Data[clmns];
+
+                    for (size_t j = 0; j < clmns; ++j)
+                    {
+                        matrix[i][j] = buffer[cnter];
+                        ++cnter;
+                    }
+                }
+            }
+
+            //! Constructor class matrix of two iterators to the vector
             Matrix(uint rows_, uint clmns_, const DataIt& beg, const DataIt& end) : rows(rows_),
                                                                                     clmns(clmns_)
             {
                 assert(rows_ * clmns_ != 0);
 
                 DataIt current = beg;
-                int num_of_elem = rows_*clmns_, cnter = 0;
+                int num_of_elems = rows_*clmns_, cnter = 0;
 
                 matrix = new Data* [rows];
 
                 for (size_t i = 0; i < rows; ++i)
                 {
-                    if (cnter == num_of_elem - 1)
+                    if (cnter == num_of_elems - 1)
                         return;
 
                     matrix[i] = new Data [clmns];
@@ -97,22 +116,25 @@ namespace AdamR
                     {
                         matrix[i][j] = *current;
                         ++current;
+                        ++cnter;
                     }
                 }
             }
+
+
 
             static Matrix eye(uint num)
             {
                 Matrix matr(num, num);
 
                 for (int i = 0; i < num; ++i)
-                {
+
                     for (int j = 0; j < num; ++j)
-                    {
+
                         if (i = j)
                             matr.matrix[i][j] = 1;
-                    }
-                }
+
+
                 return matr;
             }
 
@@ -144,12 +166,12 @@ namespace AdamR
 
             //Getters of class matrix
 
-            int nrows()
+            uint nrows()
             {
                 return rows;
             }
 
-            int nclmns()
+            uint nclmns()
             {
                 return clmns;
             }
@@ -166,10 +188,10 @@ namespace AdamR
                 clmns = rhs.clmns;
 
                 for (size_t i = 0; i < rows; ++i)
-                {
+
                     for (size_t j = 0; j < clmns; ++j)
                         matrix[i][j] = rhs.matrix[i][j];
-                }
+
 
                 return (*this);
             }
@@ -179,10 +201,9 @@ namespace AdamR
                 Matrix<Data> res_mtr{(*this)};
 
                 for (int i = 0; i < rows; ++i)
-                {
+
                     for (int j = 0; j < clmns; ++j)
                         res_mtr.matrix[i][j] *= -1;
-                }
 
                 return res_mtr;
             }
@@ -196,10 +217,10 @@ namespace AdamR
                 clmns = mtr.clmns;
 
                 for (size_t i = 0; i < rows; ++i)
-                {
+
                     for (size_t j = 0; j < clmns; ++j)
                         matrix[i][j] += mtr.matrix[i][j];
-                }
+
 
                 return (*this);
             }
@@ -212,28 +233,26 @@ namespace AdamR
                 clmns = mtr.clmns;
 
                 for (size_t i = 0; i < rows; ++i)
-                {
+
                     for (size_t j = 0; j < clmns; ++j)
                         matrix[i][j] -= mtr.matrix[i][j];
-                }
+
 
                 return (*this);
             }
 
             Matrix<Data>& operator *=(const Matrix<Data>& mtr)
             {
-                assert(clmns == mtr.clmns);
+                assert(clmns == mtr.rows);
 
                 Matrix tmp_mtr{rows, mtr.clmns, 0};
 
                 for (int i = 0; i < rows; ++i)
-                {
+
                     for (int j = 0; j < mtr.clmns; ++j)
-                    {
-                        for (int k = 0; k < mtr.clmns; ++k)
-                            tmp_mtr[i][j] += matrix[i][k]*mtr[k][j];
-                    }
-                }
+
+                        for (int k = 0; k < mtr.rows; ++k)
+                            tmp_mtr[i][j] += matrix[i][k] * mtr.matrix[k][j];
 
                 *this = tmp_mtr;
 
@@ -242,11 +261,13 @@ namespace AdamR
 
             Matrix<Data>& operator *=(Data value)
             {
+                assert((((*this).rows) * ((*this).clmns)) != 0);
+
                 for (int i = 0; i < rows; ++i)
-                {
+
                     for (int j = 0; j < clmns; ++j)
                         matrix[i][j] *= value;
-                }
+
 
                 return (*this);
             }
@@ -254,10 +275,10 @@ namespace AdamR
             Matrix<Data>& operator /=(Data value)
             {
                 for (int i = 0; i < rows; ++i)
-                {
+
                     for (int j = 0; j < clmns; ++j)
                         matrix[i][j] /= value;
-                }
+
 
                 return (*this);
             }
@@ -269,13 +290,11 @@ namespace AdamR
                     return false;
 
                 for (size_t i = 0; i < rows; ++i)
-                {
+
                     for (size_t j = 0; j < clmns; ++j)
-                    {
+
                         if (std::abs(mtr.matrix[i][j] - matrix[i][j]) > EPSILON)
                             return false;
-                    }
-                }
 
                 return true;
             }
@@ -302,7 +321,7 @@ namespace AdamR
             {
                 assert(rows_ * clmns_ != 0);
 
-                for (size_t i = 0; i < clmns; ++i)
+                for (size_t i = 0; i < rows; ++i)
                     delete[] matrix[i];
 
                 delete[] matrix;
@@ -379,11 +398,9 @@ namespace AdamR
                 Resize(clmns, rows);
 
                 for (int i = 0; i < clmns; ++i)
-                {
+
                     for(int j = 0; j < rows; ++j)
                         matrix[i][j] = tmp_mtr[j][i];
-
-                }
             }
 
 
@@ -404,6 +421,22 @@ namespace AdamR
                 std::cout << std::endl;
             }
     };
+
+    template <typename Data>
+    std::ostream& operator <<(std::ostream &os, Matrix<Data> matr)
+    {
+        for (size_t i = 0; i < matr.nrows(); ++i)
+        {
+            os << "|| ";
+
+            for (size_t j = 0; j < matr.nclmns(); ++j)
+                os << matr[i][j] << " ";
+
+            os << "||" << std::endl;
+        }
+
+        return os;
+    }
 
     template <typename Data>
     Matrix<Data> operator +(const Matrix<Data>& lhs, const Matrix<Data> rhs)
