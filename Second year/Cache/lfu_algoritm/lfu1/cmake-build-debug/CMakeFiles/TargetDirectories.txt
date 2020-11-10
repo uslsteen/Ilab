@@ -1,3 +1,0 @@
-/home/anon/ilab/Cache/lfu_algoritm/lfu1/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/anon/ilab/Cache/lfu_algoritm/lfu1/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/anon/ilab/Cache/lfu_algoritm/lfu1/cmake-build-debug/CMakeFiles/lfu1.dir
