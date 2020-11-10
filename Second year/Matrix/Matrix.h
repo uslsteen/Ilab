@@ -91,7 +91,7 @@ namespace AdamR
                 }
             }
 
-            Matrix& eye(uint rows_, uint clmns_)
+            Matrix eye(uint rows_, uint clmns_)
             {
                 Matrix matr(rows_, clmns_);
 
@@ -103,6 +103,7 @@ namespace AdamR
                             matr.matrix[i][j] = 1;
                     }
                 }
+                return matr;
             }
 
             //! Copy constructor for class Matrix
@@ -162,11 +163,17 @@ namespace AdamR
             //! Make it more smart
             Matrix<Data>& operator =(const Matrix<Data>& rhs)
             {
-                //Add processing for resizing mb
+                if (rows != rhs.rows || clmns != rhs.clmns)
+                    Resize(rhs);
 
                 rows = rhs.rows;
                 clmns = rhs.clmns;
-                matrix = rhs.matrix;
+
+                for (size_t i = 0; i < rows; ++i)
+                {
+                    for (size_t j = 0; j < clmns; ++j)
+                        matrix[i][j] = rhs.matrix[i][j];
+                }
 
                 return (*this);
             }
@@ -228,11 +235,11 @@ namespace AdamR
                     for (int j = 0; j < mtr.clmns; ++j)
                     {
                         for (int k = 0; k < mtr.clmns; ++k)
-                            tmp_mtr.matrix[i][j] += matrix[i][k]*mtr.matrix[k][j];
+                            tmp_mtr[i][j] += matrix[i][k]*mtr[k][j];
                     }
                 }
 
-                *this = std::move(tmp_mtr);
+                *this = tmp_mtr;
 
                 return (*this);
             }
@@ -259,16 +266,26 @@ namespace AdamR
                 return (*this);
             }
 
+            void Resize(const Matrix& mtr)
+            {
+                for (size_t i = 0; i < clmns; ++i)
+                    delete[] matrix[i];
 
-            /*
+                delete[] matrix;
+
+                matrix = new Data* [rows];
+
+                for (size_t i = 0; i < rows; ++i)
+                    matrix[i] = new Data[clmns];
+            }
+
+
             // Meyers rules of [][];
             //For writing const ???
             Data* operator [](int i) const
             {
                 return matrix[i];
             }
-
-             */
 
     };
 }
