@@ -71,7 +71,7 @@ namespace AdamR
 
             }
 
-            Matrix(uint rows_, uint clmns_, std::vector<Data>& buffer) : rows(rows_),
+            Matrix(uint rows_, uint clmns_,const std::vector<Data>& buffer) : rows(rows_),
                                                                          clmns(clmns_)
             {
                 assert(rows_ * clmns_ != 0);
@@ -349,39 +349,47 @@ namespace AdamR
                 return res;
             }
 
+
+
         // приведение матрицы к треугольному виду, метод Гаусса  с главным элементом
             Data detemrinant()
             {
                 assert((*this).clmns == (*this).rows);
                 assert((*this).matrix);
+                bool need_swap = false;
 
                 int swap_counter = 1;
                 uint rows = (*this).rows, clmns = (*this).clmns;
                 Matrix<Data> tmp_mtr{(*this)};
 
-                for (size_t i = 0; i < rows; ++i)
+                for (size_t i = 0; i < clmns; ++i)
                 {
                     size_t max_ind = i;
 
-                    for (size_t j = i + 1; j < rows; ++ j)
-                        if (abs(tmp_mtr.matrix[j][i]) > abs(tmp_mtr.matrix[max_ind][i]))
-                            max_ind = j;
-
-                    if (abs (tmp_mtr.matrix[max_ind][i]) < EPSILON)
-                        continue;
-
-                    for (size_t k = 0; k < tmp_mtr.clmns; ++k)
-                        std::swap (tmp_mtr.matrix[i][k], tmp_mtr.matrix[max_ind][k]);
-
-                    swap_counter = - swap_counter * (i != max_ind ? 1 : - 1);
-
-                    //  вычитаем текущую строку из всех остальных
+                    //! Finding row with the biggest first elem
                     for (size_t j = i + 1; j < rows; ++j)
                     {
-                        double q = - (static_cast<double>(tmp_mtr.matrix[j][i]) )/( static_cast<double>(tmp_mtr.matrix[i][i]));
+                        if (abs(tmp_mtr.matrix[j][i]) > abs(tmp_mtr.matrix[max_ind][i]))
+                        {
+                            max_ind = j;
+                            need_swap = true;
+                        }
+                    }
 
-                        for (size_t k = 0; k < clmns; k++)
-                            tmp_mtr[j][k] += q * tmp_mtr[i][k];
+                    //! Swap the lines [i] and [max_ind]
+                    if (need_swap)
+                    {
+                        std::swap(tmp_mtr.matrix[i], tmp_mtr.matrix[max_ind]);
+                        swap_counter = -swap_counter;
+                    }
+
+
+                    for (size_t j = i + 1; j < rows; ++j)
+                    {
+                        double q = ( static_cast<double>(tmp_mtr.matrix[j][i]) ) / ( static_cast<double>(tmp_mtr.matrix[i][i]) );
+
+                        for (size_t k = 0; k < tmp_mtr.clmns; k++)
+                            tmp_mtr[j][k] -= q * static_cast<double>(tmp_mtr[i][k]);
                     }
                 }
 
@@ -423,7 +431,7 @@ namespace AdamR
     };
 
     template <typename Data>
-    std::ostream& operator <<(std::ostream &os, Matrix<Data> matr)
+    std::ostream& operator <<(std::ostream &os, Matrix<Data>& matr)
     {
         for (size_t i = 0; i < matr.nrows(); ++i)
         {
@@ -439,7 +447,7 @@ namespace AdamR
     }
 
     template <typename Data>
-    Matrix<Data> operator +(const Matrix<Data>& lhs, const Matrix<Data> rhs)
+    Matrix<Data> operator +(const Matrix<Data>& lhs, const Matrix<Data>& rhs)
     {
         Matrix<Data> res{lhs};
 
@@ -448,7 +456,7 @@ namespace AdamR
     }
 
     template <typename Data>
-    Matrix<Data> operator -(const Matrix<Data>& lhs, const Matrix<Data> rhs)
+    Matrix<Data> operator -(const Matrix<Data>& lhs, const Matrix<Data>& rhs)
     {
         Matrix<Data> res{lhs};
 
