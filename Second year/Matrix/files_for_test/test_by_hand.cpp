@@ -46,12 +46,14 @@ int main()
     mtr3 /= 4;
     std::cout << mtr3 << std::endl;
 
-    std::vector<int> buffer10 = {1, 2, 5, 55, 89, 2, 1, 555, 5};
-    Matrix<int> mtr10 = {3, 3, buffer10};
+    std::vector<int> buffer10 = {1, 2, 5, 55, 89, 2, 1, 555, 5}, buffer0 = {111, 2, 3, 4};
+    Matrix<int> mtr10 = {3, 3, buffer10}, mtr0 = {2, 2, buffer0};
     std::cout << mtr10 << std::endl;
 
     std::cout << "Testing determinant\n";
 
+
+    std::cout << "det(mtr0) = " << mtr0.detemrinant() << std::endl;
     std::cout << "det(mtr1) = " << mtr1.detemrinant() << std::endl;
     std::cout << "det(mtr2) = " << mtr2.detemrinant() << std::endl;
     std::cout << "det(mtr3) = " << mtr3.detemrinant() << std::endl;
