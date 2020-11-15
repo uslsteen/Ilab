@@ -8,6 +8,8 @@
 #include <vector>
 #include <cassert>
 #include <math.h>
+#include <fstream>
+#include <ctime>
 
 
 namespace AdamR
@@ -26,16 +28,22 @@ namespace AdamR
             //! using for special data type of my matrix
             using DataIt = typename std::vector<Data>::iterator;
 
+            //! Constant for copmaring
             const int EPSILON = 1e-6;
 
         public:
 
+            //! Constructors for class Matrix
+
+
+            //! Empy consturctor for matrix
             Matrix() : rows(0),
                        clmns(0),
                        matrix(nullptr)
             {
             }
 
+            //! Constructor for matrix of zeros
             Matrix(int rows_, int clmns_) : rows(rows_),
                                             clmns(clmns_)
             {
@@ -50,11 +58,9 @@ namespace AdamR
                         matrix[i][j] = 0;
                 }
             }
-            //! Constructors for class Matrix
 
-            //! Constructor of matrix class of zeros
 
-            //! Constructor of matrix class of value
+            //! Constructor for matrix class of value
             Matrix(uint rows_, uint clmns_, Data val = Data{}) : rows(rows_),
                                                                  clmns(clmns_)
             {
@@ -71,6 +77,7 @@ namespace AdamR
 
             }
 
+            //! Constructor for matrix class from buffer
             Matrix(uint rows_, uint clmns_,const std::vector<Data>& buffer) : rows(rows_),
                                                                          clmns(clmns_)
             {
@@ -122,7 +129,23 @@ namespace AdamR
             }
 
 
+            //! Function returns a matrix of the upper triangular type
+            static Matrix U_matr(uint num, Data elem)
+            {
+                Matrix matr{num, num};
 
+                for (int i = 0; i < num; ++i)
+                    for (int j = 0; j < num; ++j)
+
+                        if (j >= i)
+                            matr.matrix[i][j] = elem;
+
+
+                return matr;
+            }
+
+
+            //! The function returns the identity matrix
             static Matrix eye(uint num)
             {
                 Matrix matr(num, num);
@@ -153,19 +176,17 @@ namespace AdamR
                 }
             }
 
-
+            //! Destructor for matrix class
             ~Matrix()
             {
                 for (size_t i = 0; i < rows; ++i)
                     delete[] matrix[i];
 
                 delete[] matrix;
-
                 matrix = nullptr;
             }
 
             //Getters of class matrix
-
             uint nrows()
             {
                 return rows;
@@ -221,7 +242,6 @@ namespace AdamR
                     for (size_t j = 0; j < clmns; ++j)
                         matrix[i][j] += mtr.matrix[i][j];
 
-
                 return (*this);
             }
 
@@ -236,7 +256,6 @@ namespace AdamR
 
                     for (size_t j = 0; j < clmns; ++j)
                         matrix[i][j] -= mtr.matrix[i][j];
-
 
                 return (*this);
             }
@@ -255,7 +274,6 @@ namespace AdamR
                             tmp_mtr[i][j] += matrix[i][k] * mtr.matrix[k][j];
 
                 *this = tmp_mtr;
-
                 return (*this);
             }
 
@@ -268,7 +286,6 @@ namespace AdamR
                     for (int j = 0; j < clmns; ++j)
                         matrix[i][j] *= value;
 
-
                 return (*this);
             }
 
@@ -278,7 +295,6 @@ namespace AdamR
 
                     for (int j = 0; j < clmns; ++j)
                         matrix[i][j] /= value;
-
 
                 return (*this);
             }
@@ -290,7 +306,6 @@ namespace AdamR
                     return false;
 
                 for (size_t i = 0; i < rows; ++i)
-
                     for (size_t j = 0; j < clmns; ++j)
 
                         if (std::abs(mtr.matrix[i][j] - matrix[i][j]) > EPSILON)
@@ -300,23 +315,23 @@ namespace AdamR
             }
 
 
-            // Meyers rules of [][];
-            //For writing const ???
             Data* operator [](int i) const
             {
                 return matrix[i];
             }
 
-
+/*
+ *
+ * Read Scott Mayers book (55 effective...)
             bool operator !=(const Matrix<Data>& mtr)
             {
                 return !(operator==(mtr));
             }
+*/
 
 
     private:
             //! Function for resing matrix
-            //! \param mtr
             void Resize(uint rows_, uint clmns_)
             {
                 assert(rows_ * clmns_ != 0);
@@ -336,7 +351,7 @@ namespace AdamR
 
     public:
 
-
+            //! Function for mul diagonal elements
             Data Diag_mul(const Matrix& mtr)
             {
                 assert(mtr.rows == mtr.clmns);
@@ -349,18 +364,10 @@ namespace AdamR
                 return res;
             }
 
-
-
-        // приведение матрицы к треугольному виду, метод Гаусса  с главным элементом
-            Data detemrinant()
+            //! Function - realisation Gauss algorithm
+            void Gauss_algo(Matrix& mtr, int* swap_counter)
             {
-                assert((*this).clmns == (*this).rows);
-                assert((*this).matrix);
                 bool need_swap = false;
-
-                int swap_counter = 1;
-                uint rows = (*this).rows, clmns = (*this).clmns;
-                Matrix<Data> tmp_mtr{(*this)};
 
                 for (size_t i = 0; i < clmns; ++i)
                 {
@@ -369,7 +376,7 @@ namespace AdamR
                     //! Finding row with the biggest first elem
                     for (size_t j = i + 1; j < rows; ++j)
                     {
-                        if (abs(tmp_mtr.matrix[j][i]) > abs(tmp_mtr.matrix[max_ind][i]))
+                        if (abs(mtr.matrix[j][i]) > abs(mtr.matrix[max_ind][i]))
                         {
                             max_ind = j;
                             need_swap = true;
@@ -379,19 +386,32 @@ namespace AdamR
                     //! Swap the lines [i] and [max_ind]
                     if (need_swap)
                     {
-                        std::swap(tmp_mtr.matrix[i], tmp_mtr.matrix[max_ind]);
-                        swap_counter = -swap_counter;
+                        std::swap(mtr.matrix[i], mtr.matrix[max_ind]);
+                        *swap_counter = -*swap_counter;
                     }
 
 
                     for (size_t j = i + 1; j < rows; ++j)
                     {
-                        double q = ( static_cast<double>(tmp_mtr.matrix[j][i]) ) / ( static_cast<double>(tmp_mtr.matrix[i][i]) );
+                        double q = ( static_cast<double>(mtr.matrix[j][i]) ) / ( static_cast<double>(mtr.matrix[i][i]) );
 
-                        for (size_t k = 0; k < tmp_mtr.clmns; k++)
-                            tmp_mtr[j][k] -= q * static_cast<double>(tmp_mtr[i][k]);
+                        for (size_t k = 0; k < mtr.clmns; k++)
+                            mtr[j][k] -= q * static_cast<double>(mtr[i][k]);
                     }
                 }
+            }
+
+            //! Function for calculating determinant
+            Data detemrinant()
+            {
+                assert((*this).clmns == (*this).rows);
+                assert((*this).matrix);
+
+                int swap_counter = 1;
+                uint rows = (*this).rows, clmns = (*this).clmns;
+                Matrix<Data> tmp_mtr{(*this)};
+
+                Gauss_algo(tmp_mtr, &swap_counter);
 
                 Data res = swap_counter*Diag_mul(tmp_mtr);
 
@@ -411,7 +431,7 @@ namespace AdamR
                         matrix[i][j] = tmp_mtr[j][i];
             }
 
-
+            //! Dump for matrix
             void dump(std::ostream& os) const
             {
                 std::cout << std::endl;
@@ -425,22 +445,57 @@ namespace AdamR
 
                     os << "||" << std::endl;
                 }
+                std::cout << "Num of rows = " << rows;
+                std::cout << "Num of clmns = " << clmns;
 
                 std::cout << std::endl;
             }
+
+            //! Functions for working with matrix rows
+
+            //! Function for swapping matrix rows
+            void swap_rows(uint i, uint j)
+            {
+                assert(i >= 0 && j >= 0);
+                assert(i < (*this).rows && j < (*this).rows);
+
+                std::swap((*this).matrix[i], (*this).matrix[j]);
+            }
+
+            //! Function for add matrix rows
+            void sum_rows(uint i, uint j)
+            {
+                assert(i >= 0 && j >= 0);
+                assert(i < (*this).rows && j < (*this).rows);
+
+                for (int k = 0; k < (*this).clmns; ++k)
+                    (*this).matrix[k][i] += (*this).matrix[k][j];
+            }
+
+            //! Function for mul matrix rows
+            void mul_rows_to_sclr(uint i, Data value)
+            {
+                assert(i >= 0);
+                assert(i < (*this).rows);
+
+                for (int k = 0; k < (*this).clmns; ++k)
+                    (*this).matrix[k][i] *= static_cast<double>(value);
+            }
     };
+
+    //! Also binary reloaded operators for working with matrix
 
     template <typename Data>
     std::ostream& operator <<(std::ostream &os, Matrix<Data>& matr)
     {
         for (size_t i = 0; i < matr.nrows(); ++i)
         {
-            os << "|| ";
+           // os << "|| ";
 
             for (size_t j = 0; j < matr.nclmns(); ++j)
                 os << matr[i][j] << " ";
 
-            os << "||" << std::endl;
+            os << std::endl;
         }
 
         return os;
@@ -474,8 +529,5 @@ namespace AdamR
     }
 
 }
-
-
-
 
 #endif //MATRIX_MATRIX_H

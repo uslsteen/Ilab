@@ -4,6 +4,7 @@ using namespace AdamR;
 
 #define OUT std::cout
 
+
 int main()
 {
     uint size_of_mtr = 0;
@@ -19,6 +20,6 @@ int main()
 
     std::cout << "Matrix det: " << mtr.detemrinant() << std::endl;
 
-
     return 0;
 }
+
