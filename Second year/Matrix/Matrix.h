@@ -131,7 +131,7 @@ namespace AdamR
 
                     for (int j = 0; j < num; ++j)
 
-                        if (i = j)
+                        if (i == j)
                             matr.matrix[i][j] = 1;
 
 
