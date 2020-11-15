@@ -167,11 +167,11 @@ namespace AdamR
             {
                 matrix = new Data* [rhs.rows];
 
-                for (int i = 0; i < rhs.rows; ++i)
+                for (size_t i = 0; i < rhs.rows; ++i)
                 {
                     matrix[i] = new Data [rhs.clmns];
 
-                    for (int j = 0; j < rhs.clmns; ++j)
+                    for (size_t j = 0; j < rhs.clmns; ++j)
                         matrix[i][j] = rhs.matrix[i][j];
                 }
             }
@@ -358,7 +358,7 @@ namespace AdamR
                 assert(mtr.matrix);
                 Data res = 1;
 
-                for (int i = 0; i < mtr.rows; ++i)
+                for (size_t i = 0; i < mtr.rows; ++i)
                     res *= static_cast<double>(mtr.matrix[i][i]);
 
                 return res;
@@ -369,12 +369,12 @@ namespace AdamR
             {
                 bool need_swap = false;
 
-                for (size_t i = 0; i < clmns; ++i)
+                for (size_t i = 0; i < mtr.clmns; ++i)
                 {
                     size_t max_ind = i;
 
                     //! Finding row with the biggest first elem
-                    for (size_t j = i + 1; j < rows; ++j)
+                    for (size_t j = i + 1; j < mtr.rows; ++j)
                     {
                         if (abs(mtr.matrix[j][i]) > abs(mtr.matrix[max_ind][i]))
                         {
@@ -391,7 +391,7 @@ namespace AdamR
                     }
 
 
-                    for (size_t j = i + 1; j < rows; ++j)
+                    for (size_t j = i + 1; j < mtr.rows; ++j)
                     {
                         double q = ( static_cast<double>(mtr.matrix[j][i]) ) / ( static_cast<double>(mtr.matrix[i][i]) );
 
@@ -408,7 +408,6 @@ namespace AdamR
                 assert((*this).matrix);
 
                 int swap_counter = 1;
-                uint rows = (*this).rows, clmns = (*this).clmns;
                 Matrix<Data> tmp_mtr{(*this)};
 
                 Gauss_algo(tmp_mtr, &swap_counter);
