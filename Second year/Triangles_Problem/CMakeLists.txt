@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
-project(New_tr)
+project(Triangles_upd)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(New_tr main.cpp Intersect_algo.h Line.h Plane.h Triangle.h Vec.h)
+add_executable(Triangles_upd main.cpp)
