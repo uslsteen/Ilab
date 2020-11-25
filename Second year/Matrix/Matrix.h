@@ -134,9 +134,11 @@ namespace AdamR
             {
                 Matrix matr{num, num};
 
+                //for (int i = 0; i < num; ++i)
+
+
                 for (int i = 0; i < num; ++i)
                     for (int j = 0; j < num; ++j)
-
                         if (j >= i)
                             matr.matrix[i][j] = elem;
 
@@ -151,12 +153,7 @@ namespace AdamR
                 Matrix matr(num, num);
 
                 for (int i = 0; i < num; ++i)
-
-                    for (int j = 0; j < num; ++j)
-
-                        if (i == j)
-                            matr.matrix[i][j] = 1;
-
+                    matr.matrix[i][i] = 1;
 
                 return matr;
             }
@@ -212,7 +209,6 @@ namespace AdamR
 
                     for (size_t j = 0; j < clmns; ++j)
                         matrix[i][j] = rhs.matrix[i][j];
-
 
                 return (*this);
             }
@@ -402,10 +398,10 @@ namespace AdamR
             }
 
             //! Function for calculating determinant
-            Data detemrinant()
+            Data determinant()
             {
-                assert((*this).clmns == (*this).rows);
-                assert((*this).matrix);
+                assert(clmns == rows);
+                assert(matrix);
 
                 int swap_counter = 1;
                 Matrix<Data> tmp_mtr{(*this)};
@@ -444,8 +440,8 @@ namespace AdamR
 
                     os << "||" << std::endl;
                 }
-                std::cout << "Num of rows = " << rows;
-                std::cout << "Num of clmns = " << clmns;
+                std::cout << "Num of rows = " << rows << std::endl;
+                std::cout << "Num of clmns = " << clmns << std::endl;
 
                 std::cout << std::endl;
             }
