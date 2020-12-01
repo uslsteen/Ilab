@@ -79,26 +79,21 @@ namespace AdamR
 
             //! Constructor for matrix class from buffer
             Matrix(uint rows_, uint clmns_,const std::vector<Data>& buffer) : rows(rows_),
-                                                                         clmns(clmns_)
+                                                                              clmns(clmns_)
             {
                 assert(rows_ * clmns_ != 0);
 
-                size_t num_of_elems = buffer.size(), cnter = 0;
+
+                size_t num_of_elems = rows_*clmns_, i = 0;
+
                 matrix = new Data* [rows];
 
-                for (size_t i = 0; i < rows; ++i)
-                {
-                    if (cnter == num_of_elems - 1)
-                        return;
-
+                for (i = 0; i < rows; ++i)
                     matrix[i] = new Data[clmns];
 
-                    for (size_t j = 0; j < clmns; ++j)
-                    {
-                        matrix[i][j] = buffer[cnter];
-                        ++cnter;
-                    }
-                }
+                for (i = 0; i < num_of_elems; ++i)
+                    matrix[i / clmns][i % clmns] = buffer[i];
+
             }
 
             //! Constructor class matrix of two iterators to the vector
@@ -108,24 +103,18 @@ namespace AdamR
                 assert(rows_ * clmns_ != 0);
 
                 DataIt current = beg;
-                int num_of_elems = rows_*clmns_, cnter = 0;
+                int num_of_elems = rows*clmns, cnter = 0, i = 0;
 
                 matrix = new Data* [rows];
 
-                for (size_t i = 0; i < rows; ++i)
-                {
-                    if (cnter == num_of_elems - 1)
-                        return;
+                for (i = 0; i < rows; ++i)
+                    matrix[i] = new Data[clmns];
 
-                    matrix[i] = new Data [clmns];
+                i = 0;
 
-                    for (size_t j = 0; j < clmns; ++j)
-                    {
-                        matrix[i][j] = *current;
-                        ++current;
-                        ++cnter;
-                    }
-                }
+                for (DataIt cur = beg; i < num_of_elems; ++cur, ++i)
+                    matrix[i / clmns][i % clmns] = *cur;
+
             }
 
 
@@ -134,14 +123,10 @@ namespace AdamR
             {
                 Matrix matr{num, num};
 
-                //for (int i = 0; i < num; ++i)
+                uint num_of_elements = (num*num - num)/2;
 
-
-                for (int i = 0; i < num; ++i)
-                    for (int j = 0; j < num; ++j)
-                        if (j >= i)
-                            matr.matrix[i][j] = elem;
-
+                for (size_t i = 0; i < num_of_elements; ++i)
+                    matr[i / num][i % num ] = elem;
 
                 return matr;
             }
