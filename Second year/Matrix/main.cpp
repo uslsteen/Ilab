@@ -6,7 +6,7 @@ using namespace AdamR;
 
 
 
-/*
+
 int main()
 {
     uint clmns1 = 1, rows1 = 5, clmns2 = 1, rows2 = 6;
@@ -19,7 +19,7 @@ int main()
 
 
     Matrix<double> mtr3 = {6, 1, buffer3.begin(), buffer3.end()};
-    Matrix<double> mtr4 = Matrix<double>::U_matr(3, 1);
+    Matrix<double> mtr4 = Matrix<double>::U_matr(7, 1);
     OUT << mtr4;
 
     mtr3.dump(OUT);
@@ -38,9 +38,7 @@ int main()
     return 0;
 }
 
-*/
-
-
+/*
 
 void Test_for_eq(uint rows1, uint clmns1, uint rows2, uint clmns2, size_t num_of_test)
 {
@@ -94,7 +92,7 @@ int main()
     return 0;
 }
 
-
+*/
 
 
 

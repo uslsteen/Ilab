@@ -122,11 +122,19 @@ namespace AdamR
             static Matrix U_matr(uint num, Data elem)
             {
                 Matrix matr{num, num};
+                
+                for (uint i = 0; i < num*num; ++i)
+                {
+                    if ((i % num) == 0)
+                        for (int k = 0; k < (i / num); ++k)
+                            i++;
 
-                uint num_of_elements = (num*num - num)/2;
+                    uint rows_it = i / num;
+                    uint clmns_it = i % num;
 
-                for (size_t i = 0; i < num_of_elements; ++i)
-                    matr[i / num][i % num ] = elem;
+                    matr[rows_it][clmns_it] = elem;
+
+                }
 
                 return matr;
             }
