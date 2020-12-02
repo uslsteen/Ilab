@@ -1,6 +1,6 @@
 #include "Matrix.hpp"
 
-using namespace AdamR;
+using namespace Linear_space;
 
 #define OUT std::cout
 
@@ -24,4 +24,3 @@ int main()
 
     return 0;
 }
-

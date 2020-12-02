@@ -12,7 +12,7 @@
 #include <ctime>
 
 
-namespace AdamR
+namespace Linear_space
 {
     template <typename Data>
     class Matrix final
