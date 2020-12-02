@@ -1,5 +1,6 @@
 #include "Matrix.hpp"
 
+//! There is bug with sign of real det!
 
 using namespace AdamR;
 
@@ -15,7 +16,7 @@ int main()
     OUT << "Input size of you matrix\n";
     std::cin >> size_of_mtr;
 
-    OUT << "Input expected det of your matrix\n";
+    OUT << "Input start number for calculating!\n";
     std::cin >> real_det;
 
     double copy_det = real_det;
@@ -60,8 +61,8 @@ int main()
     matr.transposition();
     std::cout << "Calculated matr determiannt = " << matr.determ() << std::endl;
     std::cout << matr << std::endl;
-    std::cout << "Start det = " << real_det << std::endl;
-    std::cout << "Copy det = " << copy_det << std::endl;
+    std::cout << "Start num = " << real_det << std::endl;
+    std::cout << "Real det = " << copy_det << std::endl;
 
 
     return 0;
