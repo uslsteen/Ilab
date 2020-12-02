@@ -12,7 +12,7 @@
 #include <ctime>
 
 
-namespace AdamR
+namespace Linal_space
 {
     template <typename Data>
     class Matrix final
@@ -36,7 +36,7 @@ namespace AdamR
             //! Constructors for class Matrix
 
 
-            //! Empy consturctor for matrix
+            //! Empty consturctor for matrix
             Matrix() : rows(0),
                        clmns(0),
                        matrix(nullptr)
@@ -122,7 +122,7 @@ namespace AdamR
             static Matrix U_matr(uint num, Data elem)
             {
                 Matrix matr{num, num};
-                
+
                 for (uint i = 0; i < num*num; ++i)
                 {
                     if ((i % num) == 0)
@@ -354,23 +354,39 @@ namespace AdamR
             }
 
             //! Function - realisation Gauss algorithm
-            void Gauss_algo(Matrix& mtr, int* swap_counter)
+            void Gauss_algo(Matrix& mtr, int* swap_counter, bool* is_zero)
             {
                 bool need_swap = false;
 
                 for (size_t i = 0; i < mtr.clmns; ++i)
                 {
                     size_t max_ind = i;
+                    *is_zero = true;
 
-                    //! Finding row with the biggest first elem
-                    for (size_t j = i + 1; j < mtr.rows; ++j)
+                    //! Null det processing
+                    if (mtr.matrix[i][i] > EPSILON)
+                        *is_zero = false;
+                    else
                     {
-                        if (abs(mtr.matrix[j][i]) > abs(mtr.matrix[max_ind][i]))
+                        //! Finding row with the biggest first elem
+                        for (size_t j = i + 1; j < mtr.rows; ++j)
                         {
-                            max_ind = j;
-                            need_swap = true;
+                            if (mtr.matrix[j][i] > EPSILON)
+                            {
+                                *is_zero = false;
+
+                                if (abs(mtr.matrix[j][i]) > abs(mtr.matrix[max_ind][i]))
+                                {
+                                    max_ind = j;
+                                    need_swap = true;
+                                }
+                            }
                         }
                     }
+
+                    //! Null det processing
+                    if ((*is_zero))
+                        return;
 
                     //! Swap the lines [i] and [max_ind]
                     if (need_swap)
@@ -382,10 +398,10 @@ namespace AdamR
 
                     for (size_t j = i + 1; j < mtr.rows; ++j)
                     {
-                        double q = ( static_cast<double>(mtr.matrix[j][i]) ) / ( static_cast<double>(mtr.matrix[i][i]) );
+                        double coeff = ( static_cast<double>(mtr.matrix[j][i]) ) / ( static_cast<double>(mtr.matrix[i][i]) );
 
                         for (size_t k = 0; k < mtr.clmns; k++)
-                            mtr[j][k] -= q * static_cast<double>(mtr[i][k]);
+                            mtr[j][k] -= coeff * static_cast<double>(mtr[i][k]);
                     }
                 }
             }
@@ -397,9 +413,14 @@ namespace AdamR
                 assert(matrix);
 
                 int swap_counter = 1;
+                bool is_zero = false;
+
                 Matrix<Data> tmp_mtr{(*this)};
 
-                Gauss_algo(tmp_mtr, &swap_counter);
+                Gauss_algo(tmp_mtr, &swap_counter, &is_zero);
+
+                if (is_zero)
+                    return 0;
 
                 Data res = swap_counter*Diag_mul(tmp_mtr);
 
@@ -517,5 +538,7 @@ namespace AdamR
     }
 
 }
+
+
 
 #endif //MATRIX_MATRIX_H

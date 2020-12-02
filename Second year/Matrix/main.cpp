@@ -1,11 +1,11 @@
 #include "Matrix.h"
 
-using namespace AdamR;
+using namespace Linal_space;
 
 #define OUT std::cout
 
 
-
+/*
 
 int main()
 {
@@ -37,6 +37,7 @@ int main()
 
     return 0;
 }
+ */
 
 /*
 
@@ -97,7 +98,7 @@ int main()
 
 
 
-/*
+
 int main()
 {
     uint size_of_mtr = 0;
@@ -116,5 +117,5 @@ int main()
 
     return 0;
 }
-*/
+
 
