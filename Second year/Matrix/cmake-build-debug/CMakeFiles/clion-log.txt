@@ -1,0 +1,4 @@
+/home/anon/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/202.8194.17/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ -G "CodeBlocks - Unix Makefiles" "/home/anon/Code/ilab/Second year/Matrix"
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/anon/Code/ilab/Second year/Matrix/cmake-build-debug
