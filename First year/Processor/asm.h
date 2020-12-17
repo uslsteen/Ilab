@@ -19,8 +19,8 @@ private:
 
 public:
 
-	Asm(void);
-	~Asm(void);
+	Asm();
+	~Asm();
 
 	bool Start_Working_Asm(const char* name_file_in, const char* name_file_out);
 
@@ -31,4 +31,4 @@ private:
 
 };
 
-#endif 
+#endif

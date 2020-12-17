@@ -14,7 +14,7 @@
 //_______________________________________________
 
 
-Proc::Proc(void) :
+Proc::Proc() :
 
 	program(nullptr),
 	program_size(0)
@@ -62,7 +62,7 @@ bool Proc::Processing(char* name_file_in)
 	return true;
 }
 
-Proc::~Proc(void)
+Proc::~Proc()
 {
 	if (program != nullptr)
 	{

@@ -8,8 +8,8 @@ class Disasm
 {
 public:
 
-	Disasm(void);
-	~Disasm(void);
+	Disasm();
+	~Disasm();
 
 	bool Disassembling(char* in_file, char* out_file);
 

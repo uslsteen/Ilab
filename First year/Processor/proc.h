@@ -5,7 +5,7 @@
 
 #define DEF_CMD(name, num, asm, proc, disasm)
 
-const int REG_SIZE = 4; 
+const int REG_SIZE = 4;
 
 
 class Proc
@@ -14,13 +14,13 @@ private:
 
 	char* program;
 	size_t program_size;
-	int registers[REG_SIZE]; 
+	int registers[REG_SIZE];
 
 
 public:
 
-	Proc(void);
-	~Proc(void);
+	Proc();
+	~Proc();
 
 	bool Processing(char* name_file_in);
 };
@@ -28,4 +28,3 @@ public:
 
 
 #endif
-

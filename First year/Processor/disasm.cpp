@@ -19,12 +19,12 @@
 		*buffer_out1++ = '\n';									\
 		buffer_out_size += buffer_out1 - buffer_last;			\
 																\
-      break;	
+      break;
 //______________________________________________________________
 
 
 
-Disasm::Disasm(void) :
+Disasm::Disasm() :
 
 	program(nullptr),
 	buffer_out(nullptr),
@@ -103,7 +103,7 @@ bool Disasm::Text_Processing(char* file_in)
 	return true;
 }
 
-Disasm::~Disasm(void)
+Disasm::~Disasm()
 {
 	if (program != nullptr)
 	{
@@ -115,4 +115,3 @@ Disasm::~Disasm(void)
 		free(buffer_out);
 	}
 }
-

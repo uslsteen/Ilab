@@ -11,11 +11,11 @@
       *buffer_out1++ = num;													\
       buffer_out_size++;													\
       asm																	\
-    } 
+    }
 
 //_________________________________________
 
-Asm::Asm(void) :
+Asm::Asm() :
 
 	program(nullptr),
 	program_size(0),
@@ -28,7 +28,7 @@ Asm::Asm(void) :
 {
 }
 
-Asm::~Asm(void)
+Asm::~Asm()
 {
 	if (code != nullptr)
 	{
