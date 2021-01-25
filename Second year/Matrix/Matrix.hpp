@@ -20,10 +20,10 @@ namespace Linear_space
         private:
 
             //! Num of rows and columns of my matrix
-            uint rows, clmns;
+            uint rows = 0, clmns = 0;
 
             //! Perfomance of my matrix
-            Data** matrix;
+            Data** matrix = nullptr;
 
             //! using for special data type of my matrix
             using DataIt = typename std::vector<Data>::iterator;
@@ -31,17 +31,37 @@ namespace Linear_space
             //! Constant for copmaring
             const int EPSILON = 1e-6;
 
+            struct Row_struct
+            {
+                uint cols = 0;
+                Data *matr_row = nullptr;
+
+                Row_struct(uint cols, Data *row) : cols(cols),
+                                                  matr_row(row)
+                {}
+
+                const Data& operator [](size_t i) const
+                {
+                    assert(i < cols);
+                    return matr_row[i];
+                }
+
+                Data& operator [](size_t i)
+                {
+                    assert(i < cols);
+                    return matr_row[i];
+                }
+
+                Row_struct(const Row_struct &row_m) = default;
+
+                Row_struct& operator =(const Row_struct &row_m) = default;
+            };
+
+
         public:
 
             //! Constructors for class Matrix
-
-
-            //! Empty consturctor for matrix
-            Matrix() : rows(0),
-                       clmns(0),
-                       matrix(nullptr)
-            {
-            }
+            
 
             //! Constructor for matrix of zeros
             Matrix(int rows_, int clmns_) : rows(rows_),
@@ -303,20 +323,18 @@ namespace Linear_space
                 return true;
             }
 
-
-            Data* operator [](int i) const
+            Row_struct operator [](size_t i) const
             {
-                return matrix[i];
+                assert(i < rows);
+                return Row_struct{clmns, matrix[i]};
             }
 
-/*
- *
- * Read Scott Mayers book (55 effective...)
-            bool operator !=(const Matrix<Data>& mtr)
+            Row_struct operator [](size_t i)
             {
-                return !(operator==(mtr));
+                assert(i < rows);
+                return Row_struct{clmns, matrix[i]};
             }
-*/
+
 
 
     private:
@@ -336,11 +354,7 @@ namespace Linear_space
                     matrix[i] = new Data[clmns_];
             }
 
-
-
     public:
-
-
 
             //! Function for mul diagonal elements
             Data Diag_mul(const Matrix& mtr)
