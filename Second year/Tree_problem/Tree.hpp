@@ -5,6 +5,12 @@
 #ifndef TREE_PROBLEM_TREE_HPP
 #define TREE_PROBLEM_TREE_HPP
 
+
+ //! TODO:
+ //! 1. Write realisation of rotation
+ //! 2. Write method balance for node
+ //! 3. Start writing method of classs tree: insertion, lower_bound() etc...
+
 /*       main conception of AVL tree      */
 //!
 
@@ -56,7 +62,6 @@ namespace avl_tree
                  return r_hgth - l_hgth;
              }
 
-             Node* balance();
 
              void set_parent(Node* parent);
              void set_l_child(Node* l_child);
@@ -108,7 +113,7 @@ namespace avl_tree
         Tree(const Data_t& elem) : nde_pos(1),
                                    root(new Node(elem))
         {}
-        
+
         ~Tree();
 
         void insert(Data_t& elem);
