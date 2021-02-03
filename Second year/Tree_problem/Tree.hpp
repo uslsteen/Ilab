@@ -5,6 +5,9 @@
 #ifndef TREE_PROBLEM_TREE_HPP
 #define TREE_PROBLEM_TREE_HPP
 
+/*       main conception of AVL tree      */
+//!
+
 namespace avl_tree
 {
 
@@ -12,6 +15,8 @@ namespace avl_tree
     class Tree final
     {
     private:
+
+        /*        Start of helpful structures for my_tree      */
         struct Node final
         {
             Data_t elem = 0;
@@ -27,26 +32,41 @@ namespace avl_tree
                                                                             left(left_),
                                                                             right(right_),
                                                                             parent(parent_)
-             {}
-
-             Data_t get_elem()
              {
-                 return elem;
+                 set_heigth();
              }
 
-             unsigned int get_heigth()
+
+             //! Function for fixing new heigth of subtree
+             int set_heigth()
              {
-                 return height;
+                 int r_hgth = (right != nullptr) ? right->height : 0;
+                 int l_hgth = (left != nullptr) ? right->height : 0;
+
+                 return (1 + std::max(r_hgth, l_hgth));
+             }
+
+             //! Function for getting heigth of left and rigth subtree of node
+             //! This function useful for creating AVL - tree
+             int balance_factor()
+             {
+                 int r_hgth = (right != nullptr) ? right->height : 0;
+                 int l_hgth = (left != nullptr) ? right->height : 0;
+
+                 return r_hgth - l_hgth;
              }
 
              Node* balance();
 
              void set_parent(Node* parent);
+             void set_l_child(Node* l_child);
+             void set_r_child(Node* r_child);
 
              void right_rotate(Node* rigth);
              void left_rotate(Node* left);
 
         };
+
 
     private:
         struct iterator final
@@ -77,6 +97,7 @@ namespace avl_tree
 
 
     /*             End of helpful structures              */
+    /*             Start interface of class AVL tree      */
 
     private:
         Node* root = nullptr;
@@ -87,9 +108,8 @@ namespace avl_tree
         Tree(const Data_t& elem) : nde_pos(1),
                                    root(new Node(elem))
         {}
-
+        
         ~Tree();
-
 
         void insert(Data_t& elem);
 
@@ -97,6 +117,16 @@ namespace avl_tree
 
         iterator begin();
         iterator end();
+
+        bool is_balanced()
+        {
+            return (std::abs(root->balance_factor()) <= 1);
+        }
+
+        unsigned int get_heigth()
+        {
+            return root->height;
+        }
 
 
     };
