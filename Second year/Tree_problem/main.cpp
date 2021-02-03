@@ -40,7 +40,7 @@ int main()
 
     /* my tree test */
 
-    avl_tree::Tree my_tree;
+    avl_tree::Tree<int> my_tree;
     cout << "There is start testing of my tree!\n";
     vector<int> res_vec2 = Tree_testing(my_tree, keys, queries);
 
