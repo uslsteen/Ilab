@@ -39,13 +39,15 @@ namespace avl_tree
 
         public:
 
-             Node(Data_t elem_, Node* left_, Node* right_, Node* parent_, Node* next_, Node* prev_) : elem(elem_),
-                                                                                                    left(left_),
-                                                                                                    right(right_),
-                                                                                                    parent(parent_),
-                                                                                                    next(next_),
-                                                                                                    prev(prev_)
+             explicit Node(Data_t& elem_) : elem(elem_)
+             {}
 
+             Node(Data_t& elem_, Node* left_, Node* right_, Node* parent_, Node* next_, Node* prev_) : elem(elem_),
+                                                                                                       left(left_),
+                                                                                                       right(right_),
+                                                                                                       parent(parent_),
+                                                                                                       next(next_),
+                                                                                                       prev(prev_)
 
              {
                  correct_heigth();
@@ -131,6 +133,9 @@ namespace avl_tree
     private:
         Node* root = nullptr;
         int nde_pos = 0; ///????? should i use it?
+        size_t size = 0;
+
+        using double_iterator = std::pair<iterator, bool>;
 
     public:
 
@@ -143,24 +148,36 @@ namespace avl_tree
 
 
 
-        void insert(Data_t& elem);
+        double_iterator insert(Data_t& elem);
         iterator lower_bound(Data_t& elem);
         iterator begin();
         iterator end();
 
         iterator Find_not_less(Node* nde, Data_t& elem);
 
+        void Balance_tree(Node* nde, Node* root);
+
     };
 
+    //! Simple constructor of class Tree
     template <typename Data_t>
     Tree<Data_t>::Tree(const Data_t& elem) : nde_pos(1),
-                               root(new Node(elem))
+                                             size(1),
+                                             root(new Node(elem))
     {}
 
+    //! Destructor of class Tree without recoursion
     template <typename Data_t>
     Tree<Data_t>::~Tree()
     {
-        //! TODO
+        Node* cur = root->min_node(), *prev = nullptr;
+
+        while (cur != nullptr)
+        {
+            prev = cur;
+            cur = cur->next;
+            delete prev;
+        }
     }
 
     template <typename Data_t>
@@ -214,17 +231,91 @@ namespace avl_tree
         return root->height;
     }
 
+
+
     template <typename Data_t>
-    void Tree<Data_t>::insert(Data_t& elem)
+    void Tree<Data_t>::Balance_tree(Node* nde, Node* root)
     {
-        //! Если пришедший элемент - первый, т.е. nde_pos == 0
-        if (nde_pos == 0)
+        while (nde != root)
+        {
+            nde->balance_node();
+            nde = nde->parent;
+        }
+        root->balance_node();
+    }
+
+    template <typename Data_t>
+    typename Tree<Data_t>::double_iterator Tree<Data_t>::insert(Data_t& elem)
+    {
+        double_iterator res{iterator{nullptr}, false};
+        size_t old_size = size;
+        //! If this insertion - first insertion
+        if (size == 0)
         {
             root = new Node{elem};
-            ++nde_pos;
-            return;
+            ++size;
+
+            res.first = root;
+            res.second = true;
+            return res;
+        }
+        else
+        {
+            Node* cur = root;
+            while (cur->elem != elem)
+            {
+                if (elem > cur->elem)
+                {
+                    if (cur->right == nullptr)
+                    {
+                        //! Creating new rigth child
+                        Node* new_r_child = cur->right;
+                        new_r_child = new Node{elem, nullptr, nullptr, cur, cur->next, cur}; //! Node(Data_t& elem_, Node* left_, Node* right_, Node* parent_, Node* next_, Node* prev_)
+
+                        //! Checking for other node after cur
+                        if (cur->next != nullptr)
+                            cur->next->prev = new_r_child;
+
+                        //! By the way, we should retie cur->next to new_r_child in the end
+                        cur->next = new_r_child;
+
+                        ++size;
+                        res.first = new_r_child;
+                        cur->correct_heigth();
+                        break;
+                    }
+                    else cur = cur->right;
+                }
+                else if (elem < cur->elem)
+                {
+                    if (cur->left == nullptr)
+                    {
+                        //! Creating new left child
+                        Node new_l_child = cur->left;
+                        new_l_child = new Node{elem, nullptr, nullptr, cur, cur->next, cur};
+
+                        if (cur->prev != nullptr)
+                            cur->prev->next = new_l_child;
+
+                        cur->prev = new_l_child;
+
+                        ++size;
+                        res.first = new_l_child;
+                        cur->correct_heigth();
+                        break;
+                    }
+                    else cur = cur->left;
+                }
+
+                if (size != old_size)
+                    res.second = true;
+            }
+
+            if (res.second)
+                Balance_tree(cur, root);
         }
 
+        return res;
     }
 
     /*    Here I define methods for struct Node   */
