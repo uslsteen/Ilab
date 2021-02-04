@@ -28,7 +28,8 @@ namespace avl_tree
         {
             Data_t elem = 0;
 
-            Node* left = nullptr, * right = nullptr;
+            Node* left = nullptr;
+            Node* right = nullptr;
             Node* parent = nullptr;
 
             unsigned int height = 0;
@@ -76,6 +77,11 @@ namespace avl_tree
 
              //! Function for balance node this by defenition AVL - Tree
              void balance_node();
+
+             //! Function for finding node with min elem
+             Node* min_node();
+             //! Function for finding node with max elem
+             Node* max_node();
 
         };
 
@@ -126,22 +132,15 @@ namespace avl_tree
         {}
 
 
-        bool is_balanced()
-        {
-            return (std::abs(root->balance_factor()) <= 1);
-        }
+        bool is_balanced();
 
-        unsigned int get_heigth()
-        {
-            return root->height;
-        }
+        unsigned int get_heigth();
 
         ~Tree();
 
         void insert(Data_t& elem);
 
         iterator lower_bound(Data_t& elem);
-
         iterator begin();
         iterator end();
 
@@ -153,26 +152,51 @@ namespace avl_tree
         //! TODO
     }
 
+    template <typename Data_t>
+    typename Tree<Data_t>::iterator Tree<Data_t>::begin()
+    {
+        return iterator{root->min_node()};
+    }
 
-    /*************************************************************************************************/
+    template <typename Data_t>
+    typename Tree<Data_t>::iterator Tree<Data_t>::end()
+    {
+        return iterator{nullptr};
+    }
+
+    template <typename Data_t>
+    typename Tree<Data_t>::iterator Tree<Data_t>::lower_bound(Data_t &elem)
+    {
+
+    }
+
+    template <typename Data_t>
+    bool Tree<Data_t>::is_balanced()
+    {
+        return (std::abs(root->balance_factor()) <= 1);
+    }
+
+    template <typename Data_t>
+    unsigned int Tree<Data_t>::get_heigth()
+    {
+        return root->height;
+    }
+
+    template <typename Data_t>
+    void Tree<Data_t>::insert(Data_t& elem)
+    {
+        //! Если пришедший элемент - первый, т.е. nde_pos == 0
+        if (nde_pos == 0)
+        {
+            root = new Node{elem};
+            ++nde_pos;
+            return;
+        }
+
+    }
+
     /*    Here I define methods for struct Node   */
 
-    /*
-    template <typename Data_t>
-    void Tree<Data_t>::Node::set_parent(Node *prnt)
-    {
-        parent = prnt;
-
-        if (prnt->elem > elem)
-            prnt->left = this;
-
-        else if (prnt->elem < elem)
-            prnt->right = this;
-
-        //! Set height for new node
-        prnt->set_heigth();
-    }
-     */
 
     template <typename Data_t>
     void Tree<Data_t>::Node::set_l_chld(Node *l_chld)
@@ -260,6 +284,50 @@ namespace avl_tree
 
         return this;
     }
+
+    template <typename Data_t>
+    typename Tree<Data_t>::Node* Tree<Data_t>::Node::max_node()
+    {
+        auto cur_node = this;
+
+        while (cur_node != nullptr)
+            cur_node = cur_node->right;
+
+        return cur_node;
+    }
+
+
+    template <typename Data_t>
+    typename Tree<Data_t>::Node* Tree<Data_t>::Node::min_node()
+    {
+        auto cur_node = this;
+
+        while (cur_node != nullptr)
+            cur_node = cur_node->left;
+
+        return cur_node;
+    }
+
+
+
+
+    /*
+   template <typename Data_t>
+   void Tree<Data_t>::Node::set_parent(Node *prnt)
+   {
+       parent = prnt;template <typename Data_t>
+    void Tree<Data_t>::Node::
+
+       if (prnt->elem > elem)
+           prnt->left = this;
+
+       else if (prnt->elem < elem)
+           prnt->right = this;
+
+       //! Set height for new node
+       prnt->set_heigth();
+   }
+    */
 
 }
 
