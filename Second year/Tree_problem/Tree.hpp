@@ -22,6 +22,7 @@ namespace avl_tree
     {
     private:
 
+
         /*        Start of helpful structures for my_tree      */
         struct Node final
         {
@@ -39,12 +40,12 @@ namespace avl_tree
                                                                             right(right_),
                                                                             parent(parent_)
              {
-                 set_heigth();
+                 correct_heigth();
              }
 
 
              //! Function for fixing new heigth of subtree
-             int set_heigth()
+             int correct_heigth()
              {
                  int r_hgth = (right != nullptr) ? right->height : 0;
                  int l_hgth = (left != nullptr) ? right->height : 0;
@@ -64,13 +65,19 @@ namespace avl_tree
 
 
              void set_parent(Node* parent);
-             void set_l_child(Node* l_child);
-             void set_r_child(Node* r_child);
+             void set_l_chld(Node* l_child);
+             void set_r_chld(Node* r_child);
 
-             void right_rotate(Node* rigth);
-             void left_rotate(Node* left);
+             //! Function for making a rigth rotate around the node
+             Node* right_rotate();
+
+            //! Function for making a rigth rotate around the node
+             Node* left_rotate();
+
+             void balance_node();
 
         };
+
 
 
     private:
@@ -102,6 +109,9 @@ namespace avl_tree
 
 
     /*             End of helpful structures              */
+
+
+
     /*             Start interface of class AVL tree      */
 
     private:
@@ -114,14 +124,6 @@ namespace avl_tree
                                    root(new Node(elem))
         {}
 
-        ~Tree();
-
-        void insert(Data_t& elem);
-
-        iterator lower_bound(Data_t& elem);
-
-        iterator begin();
-        iterator end();
 
         bool is_balanced()
         {
@@ -133,8 +135,107 @@ namespace avl_tree
             return root->height;
         }
 
+        ~Tree();
+
+        void insert(Data_t& elem);
+
+        iterator lower_bound(Data_t& elem);
+
+        iterator begin();
+        iterator end();
 
     };
+
+    template <typename Data_t>
+    Tree<Data_t>::~Tree()
+    {
+        //! TODO
+    }
+
+
+    /*************************************************************************************************/
+    /*    Here I define methods for struct Node   */
+
+    template <typename Data_t>
+    void Tree<Data_t>::Node::set_parent(Node *prnt)
+    {
+        parent = prnt;
+
+        if (prnt->elem > elem)
+            prnt->left = this;
+
+        else if (prnt->elem < elem)
+            prnt->right = this;
+
+        //! Set height for new node
+        prnt->set_heigth();
+    }
+
+    template <typename Data_t>
+    void Tree<Data_t>::Node::set_l_chld(Node *l_chld)
+    {
+        left = l_chld;
+
+        //! If l_chld exist, then we can
+        if (l_chld == nullptr)
+            return;
+        else
+        {
+            l_chld->parent = this;
+            correct_heigth();
+        }
+    }
+
+    template <typename Data_t>
+    void Tree<Data_t>::Node::set_r_chld(Node *r_chld)
+    {
+        left = r_chld;
+
+        //! If r_chld exist, then we can
+        if (r_chld == nullptr)
+            return;
+        else
+        {
+            r_chld->parent = this;
+            correct_heigth();
+        }
+    }
+
+
+    template <typename Data_t>
+    typename Tree<Data_t>::Node* Tree<Data_t>::Node::right_rotate()
+    {
+        Node* y = left;
+        //left = y->right;
+
+
+        y->right = this;
+
+        correct_heigth();
+        y->correct_heigth();
+
+        return y;
+    }
+
+    template <typename Data_t>
+    typename Tree<Data_t>::Node* Tree<Data_t>::Node::left_rotate()
+    {
+        Node* y = right;
+
+        set_r_chld(y->left);  // old vers::  right = y->left;
+        y->set_l_chld(this);  // old vers::  y->left = this;
+        
+        correct_heigth();
+        y->correct_heigth();
+
+        return y;
+    }
+
+
+
+
 }
+
+
 
 #endif //TREE_PROBLEM_TREE_HPP
