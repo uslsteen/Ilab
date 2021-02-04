@@ -7,8 +7,8 @@
 
 
  //! TODO:
- //! 1. Write realisation of rotation
- //! 2. Write method balance for node
+ //! 1. Write realisation of rotation // DONE
+ //! 2. Write method balance for node // DONE
  //! 3. Start writing method of classs tree: insertion, lower_bound() etc...
 
 /*       main conception of AVL tree      */
@@ -54,7 +54,7 @@ namespace avl_tree
              }
 
              //! Function for getting heigth of left and rigth subtree of node
-             //! This function useful for creating AVL - tree
+             //! This function useful for creating AVL - Tree
              int balance_factor()
              {
                  int r_hgth = (right != nullptr) ? right->height : 0;
@@ -74,6 +74,7 @@ namespace avl_tree
             //! Function for making a rigth rotate around the node
              Node* left_rotate();
 
+             //! Function for balance node this by defenition AVL - Tree
              void balance_node();
 
         };
@@ -156,6 +157,7 @@ namespace avl_tree
     /*************************************************************************************************/
     /*    Here I define methods for struct Node   */
 
+    /*
     template <typename Data_t>
     void Tree<Data_t>::Node::set_parent(Node *prnt)
     {
@@ -170,6 +172,7 @@ namespace avl_tree
         //! Set height for new node
         prnt->set_heigth();
     }
+     */
 
     template <typename Data_t>
     void Tree<Data_t>::Node::set_l_chld(Node *l_chld)
@@ -231,7 +234,32 @@ namespace avl_tree
     }
 
 
+    template <typename Data_t>
+    void Tree<Data_t>::Node::balance_node()
+    {
+        //! Refresh height
+        correct_heigth();
 
+        int b_factor = balance_factor();
+
+        if (b_factor == 2)
+        {
+            if (right->balance_factor() < 0)
+                right = right->right_rotate();
+
+            return left_rotate();
+        }
+
+        if (b_factor == -2)
+        {
+            if (left->balance_factor() > 0)
+                left = left->left_rotate();
+
+            return right_rotate();
+        }
+
+        return this;
+    }
 
 }
 
