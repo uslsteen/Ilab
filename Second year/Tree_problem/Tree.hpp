@@ -22,7 +22,6 @@ namespace avl_tree
     {
     private:
 
-
         /*        Start of helpful structures for my_tree      */
         struct Node final
         {
@@ -30,16 +29,24 @@ namespace avl_tree
 
             Node* left = nullptr;
             Node* right = nullptr;
+
             Node* parent = nullptr;
+
+            Node* next = nullptr;
+            Node* prev = nullptr;
 
             unsigned int height = 0;
 
         public:
 
-             Node(Data_t elem_, Node* left_, Node* right_, Node* parent_) : elem(elem_),
-                                                                            left(left_),
-                                                                            right(right_),
-                                                                            parent(parent_)
+             Node(Data_t elem_, Node* left_, Node* right_, Node* parent_, Node* next_, Node* prev_) : elem(elem_),
+                                                                                                    left(left_),
+                                                                                                    right(right_),
+                                                                                                    parent(parent_),
+                                                                                                    next(next_),
+                                                                                                    prev(prev_)
+
+
              {
                  correct_heigth();
              }
@@ -65,9 +72,9 @@ namespace avl_tree
              }
 
 
-             void set_parent(Node* parent);
-             void set_l_chld(Node* l_child);
-             void set_r_chld(Node* r_child);
+             //void set_parent(Node* parent);
+             void set_l_chld(Node* l_chld);
+             void set_r_chld(Node* r_chld);
 
              //! Function for making a rigth rotate around the node
              Node* right_rotate();
@@ -115,7 +122,7 @@ namespace avl_tree
         };
 
 
-    /*             End of helpful structures              */
+    /*             End of defenition helpful structures              */
 
 
 
@@ -123,28 +130,32 @@ namespace avl_tree
 
     private:
         Node* root = nullptr;
-        int nde_pos = 0;
+        int nde_pos = 0; ///????? should i use it?
 
     public:
 
-        Tree(const Data_t& elem) : nde_pos(1),
-                                   root(new Node(elem))
-        {}
-
+        Tree(const Data_t& elem);
+        ~Tree();
 
         bool is_balanced();
 
         unsigned int get_heigth();
 
-        ~Tree();
+
 
         void insert(Data_t& elem);
-
         iterator lower_bound(Data_t& elem);
         iterator begin();
         iterator end();
 
+        iterator Find_not_less(Node* nde, Data_t& elem);
+
     };
+
+    template <typename Data_t>
+    Tree<Data_t>::Tree(const Data_t& elem) : nde_pos(1),
+                               root(new Node(elem))
+    {}
 
     template <typename Data_t>
     Tree<Data_t>::~Tree()
@@ -167,7 +178,28 @@ namespace avl_tree
     template <typename Data_t>
     typename Tree<Data_t>::iterator Tree<Data_t>::lower_bound(Data_t &elem)
     {
+        return Find_not_less(root, elem);
+    }
 
+    template <typename Data_t>
+    typename Tree<Data_t>::iterator Tree<Data_t>::Find_not_less(Node* nde, Data_t& elem)
+    {
+        if (nde == nullptr)
+            return iterator{nullptr};
+
+        //! Compare elem with nde->elem: chose the way
+        if (elem < nde->elem)
+        {
+            if (nde->left == nullptr)
+                return iterator{nde};
+
+            else return Find_not_less(nde->left, elem);
+        }
+        else if (elem > nde->elem)
+        {
+            if (nde->right == nullptr)
+                return iterator{nde};
+        }
     }
 
     template <typename Data_t>
@@ -307,9 +339,6 @@ namespace avl_tree
 
         return cur_node;
     }
-
-
-
 
     /*
    template <typename Data_t>
