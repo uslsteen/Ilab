@@ -85,7 +85,7 @@ namespace avl_tree
              Node* left_rotate();
 
              //! Function for balance node this by defenition AVL - Tree
-             void balance_node();
+             Node* balance_node();
 
              //! Function for finding node with min elem
              Node* min_node();
@@ -119,8 +119,28 @@ namespace avl_tree
 
             Data_t operator *()
             {
-                return nde_it->data;
+                return nde_it->elem;
             }
+
+            bool operator ==(const iterator& it)
+            {
+                if (nde_it == it.nde_it)
+                    return true;
+
+                else return false;
+            }
+
+            bool operator !=(const iterator& it)
+            {
+                return !(operator==(it));
+            }
+
+            iterator& operator ++()
+            {
+                nde_it = nde_it->next;
+                return *(this);
+            }
+
         };
 
 
@@ -139,6 +159,7 @@ namespace avl_tree
 
     public:
 
+        Tree();
         Tree(const Data_t& elem);
         ~Tree();
 
@@ -158,6 +179,12 @@ namespace avl_tree
         void Balance_tree(Node* nde, Node* root);
 
     };
+
+    template <typename Data_t>
+    Tree<Data_t>::Tree() :                   nde_pos(0),
+                                             size(0),
+                                             root(nullptr)
+    {}
 
     //! Simple constructor of class Tree
     template <typename Data_t>
@@ -291,7 +318,7 @@ namespace avl_tree
                     if (cur->left == nullptr)
                     {
                         //! Creating new left child
-                        Node new_l_child = cur->left;
+                        Node* new_l_child = cur->left;
                         new_l_child = new Node{elem, nullptr, nullptr, cur, cur->next, cur};
 
                         if (cur->prev != nullptr)
@@ -382,7 +409,7 @@ namespace avl_tree
 
 
     template <typename Data_t>
-    void Tree<Data_t>::Node::balance_node()
+    typename Tree<Data_t>::Node* Tree<Data_t>::Node::balance_node()
     {
         //! Refresh height
         correct_heigth();
