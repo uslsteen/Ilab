@@ -206,10 +206,9 @@ namespace avl_tree
     typename Tree<Data_t>::Node* Tree<Data_t>::Node::right_rotate()
     {
         Node* y = left;
-        //left = y->right;
 
-
-        y->right = this;
+        set_l_chld(y->right);   //old vers:: left = y->right;
+        y->set_r_chld(this);    //old vers:: y->right = this;
 
         correct_heigth();
         y->correct_heigth();
@@ -224,7 +223,7 @@ namespace avl_tree
 
         set_r_chld(y->left);  // old vers::  right = y->left;
         y->set_l_chld(this);  // old vers::  y->left = this;
-        
+
         correct_heigth();
         y->correct_heigth();
 
