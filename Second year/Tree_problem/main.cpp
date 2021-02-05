@@ -36,13 +36,18 @@ int main()
     for (auto res : res_vec1)
         cout << res << " ";
 
-    cout << "\nThere is end testing of std::set\n";
+    cout << "\nThere is end testing of std::set\n\n";
 
     /* my tree test */
 
     avl_tree::Tree<int> my_tree;
     cout << "There is start testing of my tree!\n";
     vector<int> res_vec2 = Tree_testing(my_tree, keys, queries);
+
+    for (auto res : res_vec2)
+        cout << res << " ";
+
+    cout << "\nThere is end testing of std::set\n\n";
 
     return 0;
 }

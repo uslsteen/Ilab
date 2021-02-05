@@ -152,7 +152,7 @@ namespace avl_tree
 
     private:
         Node* root = nullptr;
-        int nde_pos = 0; ///????? should i use it?
+        //int nde_pos = 0; ///????? should i use it?
         size_t size = 0;
 
         using double_iterator = std::pair<iterator, bool>;
@@ -243,7 +243,11 @@ namespace avl_tree
         {
             if (nde->right == nullptr)
                 return iterator{nde};
+
+            else return Find_not_less(nde->right, elem);
         }
+        else if (elem == nde->elem)
+            return iterator{nde};
     }
 
     template <typename Data_t>
@@ -297,8 +301,8 @@ namespace avl_tree
                     {
                         //! Creating new rigth child
                         Node* new_r_child = cur->right;
-                        new_r_child = new Node{elem, nullptr, nullptr, cur, cur->next, cur}; //! Node(Data_t& elem_, Node* left_, Node* right_, Node* parent_, Node* next_, Node* prev_)
-
+                        new_r_child = new Node{elem, nullptr, nullptr, cur, cur->next, cur};
+                        cur->right = new_r_child;
                         //! Checking for other node after cur
                         if (cur->next != nullptr)
                             cur->next->prev = new_r_child;
@@ -320,6 +324,7 @@ namespace avl_tree
                         //! Creating new left child
                         Node* new_l_child = cur->left;
                         new_l_child = new Node{elem, nullptr, nullptr, cur, cur->next, cur};
+                        cur->left = new_l_child;
 
                         if (cur->prev != nullptr)
                             cur->prev->next = new_l_child;
