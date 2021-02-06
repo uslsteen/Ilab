@@ -6,17 +6,19 @@
 #define TREE_PROBLEM_TREE_HPP
 
 
+#include <fstream>
+#include <iostream>
+
+
  //! TODO:
  //! 1. Write realisation of rotation // DONE
  //! 2. Write method balance for node // DONE
  //! 3. Start writing method of classs tree: insertion, lower_bound() etc...
 
 /*       main conception of AVL tree      */
-//!
 
 namespace avl_tree
 {
-
     template <typename Data_t>
     class Tree final
     {
@@ -92,7 +94,7 @@ namespace avl_tree
              //! Function for finding node with max elem
              Node* max_node();
 
-             void Node_dump();
+             void Node_dump(std::ofstream& out);
 
         };
 
@@ -180,7 +182,7 @@ namespace avl_tree
 
         void Balance_tree(Node* nde, Node* root);
 
-        void Tree_dump();
+        void Tree_dump(const std::string& dotname, const std::string& pngname);
 
     };
 
@@ -355,9 +357,27 @@ namespace avl_tree
     }
 
     template <typename Data_t>
-    void Tree<Data_t>::Tree_dump()
+    void Tree<Data_t>::Tree_dump(const std::string& dotname, const std::string& pngname)
     {
+        std::ofstream fout;
+        fout.open(dotname, std::ios::out);
 
+        if (!fout.is_open())
+        {
+            std::cout << "Cannot open dump file: " << dotname << "\n";
+            return;
+        }
+
+        fout << "digraph D {\n";
+
+        if (root != nullptr)
+            root->Node_dump(fout);
+
+        fout << "}\n";
+        fout.close();
+
+        std::string promt = "dot " + dotname + " -Tpng > " + pngname;
+        system(promt.c_str());
     }
 
     /*    Here I define methods for struct Node   */
@@ -474,9 +494,24 @@ namespace avl_tree
     }
 
     template <typename Data_t>
-    void Tree<Data_t>::Node::Node_dump()
+    void Tree<Data_t>::Node::Node_dump(std::ofstream& out)
     {
-        
+        if (left != nullptr)
+        {
+            out << elem << " -> " << left->data_ << ";\n";
+            left->Node_dump(out);
+        }
+
+        if (right != nullptr)
+        {
+            out << elem << " -> " << right->data_ << "\n";
+            right->Node_dump(out);
+        }
+
+        if (next != nullptr)
+            out << elem << " -> " << next->data_ << "\n";
+
+        out << elem << ";\n";
     }
 
     /*

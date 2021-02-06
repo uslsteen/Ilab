@@ -6,11 +6,18 @@
 #define TREE_PROBLEM_TEST_HPP
 
 #include "my_time.hpp"
+#include <vector>
+#include <iostream>
+#include <set>
 
 using std::vector;
 using std::cin;
 using std::cout;
 using std::endl;
+
+
+
+
 
 struct queries_t
 {
@@ -18,12 +25,13 @@ struct queries_t
 };
 
 
+
 template <typename Tree>
-vector<int> Tree_testing(Tree& tree, vector<int>& keys, vector<queries_t>& queries)
+std::vector<int> Tree_testing(Tree& tree, std::vector<int>& keys, std::vector<queries_t>& queries)
 {
     Time::Timer tmer;
 
-    vector<int> res(queries.size());
+    std::vector<int> res(queries.size());
 
     for (auto key : keys)
         tree.insert(key);
@@ -35,7 +43,7 @@ vector<int> Tree_testing(Tree& tree, vector<int>& keys, vector<queries_t>& queri
         int cnter = 0;
 
         if (start_it == end_it)
-            cout << "Add processing!\n";
+            std::cout << "Add processing!\n";
 
         while ((start_it != end_it) && (*start_it <= queries[q_beg].scnd))
         {
@@ -46,7 +54,7 @@ vector<int> Tree_testing(Tree& tree, vector<int>& keys, vector<queries_t>& queri
         res[q_beg] = cnter;
     }
 
-    cout << "Time elapsed: " << tmer.elapsed() << " msecs" << endl;
+    std::cout << "Time elapsed: " << tmer.elapsed() << " msecs" << std::endl;
 
     return res;
 }

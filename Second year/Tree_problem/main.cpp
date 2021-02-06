@@ -1,6 +1,3 @@
-#include <iostream>
-#include <vector>
-#include <set>
 
 #include "test.hpp"
 #include "Tree.hpp"
