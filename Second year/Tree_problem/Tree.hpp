@@ -92,6 +92,8 @@ namespace avl_tree
              //! Function for finding node with max elem
              Node* max_node();
 
+             void Node_dump();
+
         };
 
 
@@ -152,7 +154,7 @@ namespace avl_tree
 
     private:
         Node* root = nullptr;
-        //int nde_pos = 0; ///????? should i use it?
+        int nde_pos = 0; ///????? should i use it?
         size_t size = 0;
 
         using double_iterator = std::pair<iterator, bool>;
@@ -177,6 +179,8 @@ namespace avl_tree
         iterator Find_not_less(Node* nde, Data_t& elem);
 
         void Balance_tree(Node* nde, Node* root);
+
+        void Tree_dump();
 
     };
 
@@ -350,6 +354,12 @@ namespace avl_tree
         return res;
     }
 
+    template <typename Data_t>
+    void Tree<Data_t>::Tree_dump()
+    {
+
+    }
+
     /*    Here I define methods for struct Node   */
 
 
@@ -461,6 +471,12 @@ namespace avl_tree
             cur_node = cur_node->left;
 
         return cur_node;
+    }
+
+    template <typename Data_t>
+    void Tree<Data_t>::Node::Node_dump()
+    {
+        
     }
 
     /*
