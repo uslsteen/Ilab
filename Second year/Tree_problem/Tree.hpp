@@ -306,9 +306,11 @@ namespace avl_tree
                     if (cur->right == nullptr)
                     {
                         //! Creating new rigth child
+
                         Node* new_r_child = cur->right;
                         new_r_child = new Node{elem, nullptr, nullptr, cur, cur->next, cur};
                         cur->right = new_r_child;
+
                         //! Checking for other node after cur
                         if (cur->next != nullptr)
                             cur->next->prev = new_r_child;
@@ -344,10 +346,10 @@ namespace avl_tree
                     }
                     else cur = cur->left;
                 }
-
-                if (size != old_size)
-                    res.second = true;
             }
+
+            if (size != old_size)
+                res.second = true;
 
             if (res.second)
                 Balance_tree(cur, root);
