@@ -60,9 +60,9 @@ namespace avl_tree
              int correct_heigth()
              {
                  int r_hgth = (right != nullptr) ? right->height : 0;
-                 int l_hgth = (left != nullptr) ? right->height : 0;
+                 int l_hgth = (left != nullptr) ? left->height : 0;
 
-                 return (1 + std::max(r_hgth, l_hgth));
+                 height = (1 + std::max(r_hgth, l_hgth));
              }
 
              //! Function for getting heigth of left and rigth subtree of node
@@ -70,13 +70,13 @@ namespace avl_tree
              int balance_factor()
              {
                  int r_hgth = (right != nullptr) ? right->height : 0;
-                 int l_hgth = (left != nullptr) ? right->height : 0;
+                 int l_hgth = (left != nullptr) ? left->height : 0;
 
                  return r_hgth - l_hgth;
              }
 
 
-             //void set_parent(Node* parent);
+             void set_parent(Node* parent);
              void set_l_chld(Node* l_chld);
              void set_r_chld(Node* r_chld);
 
@@ -352,7 +352,15 @@ namespace avl_tree
                 res.second = true;
 
             if (res.second)
-                Balance_tree(cur, root);
+            {
+                while (cur != root)
+                {
+                    cur = cur->balance_node();
+                    cur = cur->parent;
+                }
+                root = root->balance_node();
+            }
+               // Balance_tree(cur, root);
         }
 
         return res;
@@ -391,13 +399,11 @@ namespace avl_tree
         left = l_chld;
 
         //! If l_chld exist, then we can
-        if (l_chld == nullptr)
-            return;
-        else
+        if (l_chld != nullptr)
         {
             l_chld->parent = this;
-            correct_heigth();
         }
+        correct_heigth();
     }
 
     template <typename Data_t>
@@ -406,13 +412,11 @@ namespace avl_tree
         left = r_chld;
 
         //! If r_chld exist, then we can
-        if (r_chld == nullptr)
-            return;
-        else
+        if (r_chld != nullptr)
         {
             r_chld->parent = this;
-            correct_heigth();
         }
+        correct_heigth();
     }
 
 
@@ -420,6 +424,7 @@ namespace avl_tree
     typename Tree<Data_t>::Node* Tree<Data_t>::Node::right_rotate()
     {
         Node* y = left;
+        y->set_parent(parent);
 
         set_l_chld(y->right);   //old vers:: left = y->right;
         y->set_r_chld(this);    //old vers:: y->right = this;
@@ -434,6 +439,7 @@ namespace avl_tree
     typename Tree<Data_t>::Node* Tree<Data_t>::Node::left_rotate()
     {
         Node* y = right;
+        y->set_parent(parent);
 
         set_r_chld(y->left);  // old vers::  right = y->left;
         y->set_l_chld(this);  // old vers::  y->left = this;
@@ -456,7 +462,10 @@ namespace avl_tree
         if (b_factor == 2)
         {
             if (right->balance_factor() < 0)
+            {
                 right = right->right_rotate();
+                correct_heigth();
+            }
 
             return left_rotate();
         }
@@ -464,7 +473,10 @@ namespace avl_tree
         if (b_factor == -2)
         {
             if (left->balance_factor() > 0)
+            {
                 left = left->left_rotate();
+                correct_heigth();
+            }
 
             return right_rotate();
         }
@@ -516,12 +528,14 @@ namespace avl_tree
         out << elem << ";\n";
     }
 
-    /*
+
    template <typename Data_t>
    void Tree<Data_t>::Node::set_parent(Node *prnt)
    {
-       parent = prnt;template <typename Data_t>
-    void Tree<Data_t>::Node::
+       parent = prnt;
+
+       if (prnt == nullptr)
+           return;
 
        if (prnt->elem > elem)
            prnt->left = this;
@@ -530,9 +544,8 @@ namespace avl_tree
            prnt->right = this;
 
        //! Set height for new node
-       prnt->set_heigth();
+       prnt->correct_heigth();
    }
-    */
 
 }
 
