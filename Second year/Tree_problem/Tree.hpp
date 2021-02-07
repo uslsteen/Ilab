@@ -498,18 +498,18 @@ namespace avl_tree
     {
         if (left != nullptr)
         {
-            out << elem << " -> " << left->data_ << ";\n";
+            out << elem << " -> " << left->elem << ";\n";
             left->Node_dump(out);
         }
 
         if (right != nullptr)
         {
-            out << elem << " -> " << right->data_ << "\n";
+            out << elem << " -> " << right->elem << "\n";
             right->Node_dump(out);
         }
 
         if (next != nullptr)
-            out << elem << " -> " << next->data_ << "\n";
+            out << elem << " -> " << next->elem << "\n";
 
         out << elem << ";\n";
     }
