@@ -321,6 +321,7 @@ namespace avl_tree
                         ++size;
                         res.first = new_r_child;
                         cur->correct_heigth();
+
                         break;
                     }
                     else cur = cur->right;
@@ -331,7 +332,8 @@ namespace avl_tree
                     {
                         //! Creating new left child
                         Node* new_l_child = cur->left;
-                        new_l_child = new Node{elem, nullptr, nullptr, cur, cur->next, cur};
+
+                        new_l_child = new Node{elem, nullptr, nullptr, cur, cur, cur->next}; // Node(Data_t& elem_, Node* left_, Node* right_, Node* parent_, Node* next_, Node* prev_)
                         cur->left = new_l_child;
 
                         if (cur->prev != nullptr)
@@ -400,22 +402,20 @@ namespace avl_tree
 
         //! If l_chld exist, then we can
         if (l_chld != nullptr)
-        {
             l_chld->parent = this;
-        }
+
         correct_heigth();
     }
 
     template <typename Data_t>
     void Tree<Data_t>::Node::set_r_chld(Node *r_chld)
     {
-        left = r_chld;
+        right = r_chld;
 
         //! If r_chld exist, then we can
         if (r_chld != nullptr)
-        {
             r_chld->parent = this;
-        }
+
         correct_heigth();
     }
 
@@ -424,14 +424,13 @@ namespace avl_tree
     typename Tree<Data_t>::Node* Tree<Data_t>::Node::right_rotate()
     {
         Node* y = left;
-        //y->set_parent(parent);
-        //parent->set_parent(y);
+        y->set_parent(parent);
 
-        //set_l_chld(y->right);   //old vers:: left = y->right;
-        //y->set_r_chld(this);    //old vers:: y->right = this;
+        set_l_chld(y->right);   //old vers:: left = y->right;
+        y->set_r_chld(this);    //old vers:: y->right = this;
 
-        left = y->right;
-        y->right = this;
+        //left = y->right;
+        //y->right = this;
 
         //y->right->left = nullptr;  // stupid idea???
 
@@ -445,14 +444,13 @@ namespace avl_tree
     typename Tree<Data_t>::Node* Tree<Data_t>::Node::left_rotate()
     {
         Node* y = right;
-        //y->set_parent(parent);
-        //parent->set_parent(y);
+        y->set_parent(parent);
 
-        right = y->left;
-        y->left = this;
+        //right = y->left;
+        //y->left = this;
 
-        //set_r_chld(y->left);  // old vers::  right = y->left;
-        //y->set_l_chld(this);  // old vers::  y->left = this;
+        set_r_chld(y->left);  // old vers::  right = y->left;
+        y->set_l_chld(this);  // old vers::  y->left = this;
 
         //y->left->right = nullptr; // stupid idea???
 
