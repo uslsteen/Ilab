@@ -156,7 +156,6 @@ namespace avl_tree
 
     private:
         Node* root = nullptr;
-        int nde_pos = 0; ///????? should i use it?
         size_t size = 0;
 
         using double_iterator = std::pair<iterator, bool>;
@@ -180,22 +179,20 @@ namespace avl_tree
 
         iterator Find_not_less(Node* nde, Data_t& elem);
 
-        void Balance_tree(Node* nde, Node* root);
+        void Balance_tree(Node** nde, Node** root);
 
         void Tree_dump(const std::string& dotname, const std::string& pngname);
 
     };
 
     template <typename Data_t>
-    Tree<Data_t>::Tree() :                   nde_pos(0),
-                                             size(0),
+    Tree<Data_t>::Tree() :                   size(0),
                                              root(nullptr)
     {}
 
     //! Simple constructor of class Tree
     template <typename Data_t>
-    Tree<Data_t>::Tree(const Data_t& elem) : nde_pos(1),
-                                             size(1),
+    Tree<Data_t>::Tree(const Data_t& elem) : size(1),
                                              root(new Node(elem))
     {}
 
@@ -271,14 +268,14 @@ namespace avl_tree
 
 
     template <typename Data_t>
-    void Tree<Data_t>::Balance_tree(Node* nde, Node* root)
+    void Tree<Data_t>::Balance_tree(Node** nde, Node** root)
     {
-        while (nde != root)
+        while (*nde != *root)
         {
-            nde->balance_node();
-            nde = nde->parent;
+            *nde = (*nde)->balance_node();
+            *nde = (*nde)->parent;
         }
-        root->balance_node();
+        *root = (*root)->balance_node();
     }
 
     template <typename Data_t>
@@ -306,8 +303,8 @@ namespace avl_tree
                     if (cur->right == nullptr)
                     {
                         //! Creating new rigth child
-
                         Node* new_r_child = cur->right;
+
                         new_r_child = new Node{elem, nullptr, nullptr, cur, cur->next, cur};
                         cur->right = new_r_child;
 
@@ -333,7 +330,7 @@ namespace avl_tree
                         //! Creating new left child
                         Node* new_l_child = cur->left;
 
-                        new_l_child = new Node{elem, nullptr, nullptr, cur, cur, cur->next}; // Node(Data_t& elem_, Node* left_, Node* right_, Node* parent_, Node* next_, Node* prev_)
+                        new_l_child = new Node{elem, nullptr, nullptr, cur, cur, cur->next};
                         cur->left = new_l_child;
 
                         if (cur->prev != nullptr)
@@ -344,6 +341,7 @@ namespace avl_tree
                         ++size;
                         res.first = new_l_child;
                         cur->correct_heigth();
+
                         break;
                     }
                     else cur = cur->left;
@@ -352,17 +350,8 @@ namespace avl_tree
 
             if (size != old_size)
                 res.second = true;
-
-            if (res.second)
-            {
-                while (cur != root)
-                {
-                    cur = cur->balance_node();
-                    cur = cur->parent;
-                }
-                root = root->balance_node();
-            }
-               // Balance_tree(cur, root);
+            
+            Balance_tree(&cur, &root);
         }
 
         return res;
@@ -429,11 +418,6 @@ namespace avl_tree
         set_l_chld(y->right);   //old vers:: left = y->right;
         y->set_r_chld(this);    //old vers:: y->right = this;
 
-        //left = y->right;
-        //y->right = this;
-
-        //y->right->left = nullptr;  // stupid idea???
-
         correct_heigth();
         y->correct_heigth();
 
@@ -446,18 +430,31 @@ namespace avl_tree
         Node* y = right;
         y->set_parent(parent);
 
-        //right = y->left;
-        //y->left = this;
-
         set_r_chld(y->left);  // old vers::  right = y->left;
         y->set_l_chld(this);  // old vers::  y->left = this;
-
-        //y->left->right = nullptr; // stupid idea???
 
         correct_heigth();
         y->correct_heigth();
 
         return y;
+    }
+
+    template <typename Data_t>
+    void Tree<Data_t>::Node::set_parent(Node *prnt)
+    {
+        parent = prnt;
+
+        if (prnt == nullptr)
+            return;
+
+        if (prnt->elem > elem)
+            prnt->left = this;
+
+        else if (prnt->elem < elem)
+            prnt->right = this;
+
+        //! Set height for new node
+        prnt->correct_heigth();
     }
 
 
@@ -537,28 +534,6 @@ namespace avl_tree
 
         out << elem << ";\n";
     }
-
-
-   template <typename Data_t>
-   void Tree<Data_t>::Node::set_parent(Node *prnt)
-   {
-       parent = prnt; // y->set_parent(x); => parent of y = x
-                      // parent->set_parent(y);
-       if (prnt == nullptr)
-           return;
-
-       if (prnt->elem > elem)
-           prnt->left = this;
-
-       else if (prnt->elem < elem)
-           prnt->right = this;
-
-       //! Set height for new node
-       prnt->correct_heigth();
-   }
-
 }
-
-
 
 #endif //TREE_PROBLEM_TREE_HPP
