@@ -424,10 +424,16 @@ namespace avl_tree
     typename Tree<Data_t>::Node* Tree<Data_t>::Node::right_rotate()
     {
         Node* y = left;
-        y->set_parent(parent);
+        //y->set_parent(parent);
+        //parent->set_parent(y);
 
-        set_l_chld(y->right);   //old vers:: left = y->right;
-        y->set_r_chld(this);    //old vers:: y->right = this;
+        //set_l_chld(y->right);   //old vers:: left = y->right;
+        //y->set_r_chld(this);    //old vers:: y->right = this;
+
+        left = y->right;
+        y->right = this;
+
+        //y->right->left = nullptr;  // stupid idea???
 
         correct_heigth();
         y->correct_heigth();
@@ -439,10 +445,16 @@ namespace avl_tree
     typename Tree<Data_t>::Node* Tree<Data_t>::Node::left_rotate()
     {
         Node* y = right;
-        y->set_parent(parent);
+        //y->set_parent(parent);
+        //parent->set_parent(y);
 
-        set_r_chld(y->left);  // old vers::  right = y->left;
-        y->set_l_chld(this);  // old vers::  y->left = this;
+        right = y->left;
+        y->left = this;
+
+        //set_r_chld(y->left);  // old vers::  right = y->left;
+        //y->set_l_chld(this);  // old vers::  y->left = this;
+
+        //y->left->right = nullptr; // stupid idea???
 
         correct_heigth();
         y->correct_heigth();
@@ -532,8 +544,8 @@ namespace avl_tree
    template <typename Data_t>
    void Tree<Data_t>::Node::set_parent(Node *prnt)
    {
-       parent = prnt;
-
+       parent = prnt; // y->set_parent(x); => parent of y = x
+                      // parent->set_parent(y);
        if (prnt == nullptr)
            return;
 
