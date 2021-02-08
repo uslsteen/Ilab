@@ -9,6 +9,8 @@
 #include <vector>
 #include <iostream>
 #include <set>
+#include <ctime>
+#include <string>
 
 using std::vector;
 using std::cin;

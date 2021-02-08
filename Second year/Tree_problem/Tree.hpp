@@ -245,7 +245,7 @@ namespace avl_tree
         else if (elem > nde->elem)
         {
             if (nde->right == nullptr)
-                return iterator{nde};
+                return ++iterator{nde};
 
             else return Find_not_less(nde->right, elem);
         }
@@ -350,7 +350,7 @@ namespace avl_tree
 
             if (size != old_size)
                 res.second = true;
-            
+
             Balance_tree(&cur, &root);
         }
 
