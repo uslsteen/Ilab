@@ -47,7 +47,7 @@ int main()
     cout << "\nThere is end testing of std::set\n\n";
 
 
-    my_tree.Tree_dump(dotname, pngname);
+    //my_tree.Tree_dump(dotname, pngname);
 
     return 0;
 }
