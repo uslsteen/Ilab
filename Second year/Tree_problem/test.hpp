@@ -38,18 +38,19 @@ std::vector<int> Tree_testing(Tree& tree, std::vector<int>& keys, std::vector<qu
     for (auto key : keys)
         tree.insert(key);
 
+
     for (int q_beg = 0, q_end = queries.size(); q_beg != q_end; ++q_beg)
     {
-        auto start_it = tree.lower_bound(queries[q_beg].frst);
+        auto cur_it = tree.lower_bound(queries[q_beg].frst);
         auto end_it = tree.end();
         int cnter = 0;
 
-        if (start_it == end_it)
+        if (cur_it == end_it)
             std::cout << "Add processing!\n";
 
-        while ((start_it != end_it) && (*start_it <= queries[q_beg].scnd))
+        while ((cur_it != end_it) && (*cur_it < queries[q_beg].scnd))
         {
-            ++start_it;
+            ++cur_it;
             ++cnter;
         }
 

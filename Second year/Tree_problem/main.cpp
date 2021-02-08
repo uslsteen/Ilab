@@ -3,8 +3,8 @@
 #include "Tree.hpp"
 
 
-std::string dotname = "tree7.dot";
-std::string pngname = "tree7.png";
+std::string dotname = "tree14.dot";
+std::string pngname = "tree14.png";
 
 int main()
 {
@@ -27,7 +27,6 @@ int main()
     for (int i = 0; i < num_of_qs; ++i)
         cin >> queries[i].frst >> queries[i].scnd;
 
-
     avl_tree::Tree<int> my_tree;
     cout << "There is start testing of my tree!\n";
     vector<int> res_vec2 = Tree_testing(my_tree, keys, queries);
@@ -47,7 +46,8 @@ int main()
 
     cout << "\nThere is end testing of std::set\n\n";
 
-    //my_tree.Tree_dump(dotname, pngname);
+
+    my_tree.Tree_dump(dotname, pngname);
 
     return 0;
 }
