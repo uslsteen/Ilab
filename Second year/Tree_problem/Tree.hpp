@@ -194,7 +194,7 @@ namespace avl_tree
                         //! Creating new rigth child
                         node::Node<Data_t>* new_r_child = cur->right;
 
-                        new_r_child = new node::Node<Data_t>{elem, nullptr, nullptr, cur, cur->next, cur}; // Node(Data_t& elem_, Node* left_, Node* right_, Node* parent_, Node* next_, Node* prev_)
+                        new_r_child = new node::Node<Data_t>{elem, nullptr, nullptr, cur, cur->next, cur};
                         cur->right = new_r_child;
 
                         //! Checking for other node after cur
