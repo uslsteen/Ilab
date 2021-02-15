@@ -27,6 +27,7 @@ typedef struct option OPT;
 //! Keys as bit constant
 #define T_KEY 0x1
 #define C_KEY 0x2
+#define D_KEY 0x4
 
 
 enum
@@ -41,10 +42,11 @@ const OPT OPTIONS[] =
         {
                 {"time", 0, NULL, 'T'},
                 {"corrective", 0, NULL, 'C'},
+                {"dump", 0, NULL, 'C'},
                 {0, 0, 0, 0},
         };
 
-const char OPT_STR[] = "TC";
+const char OPT_STR[] = "TCD";
 
 
 
@@ -58,12 +60,10 @@ template <typename Tree>
 std::vector<int> Tree_testing(Tree& tree, std::vector<int>& keys, std::vector<queries_t>& queries, opt_t option)
 {
     Time::Timer tmer;
-
     std::vector<int> res(queries.size());
 
     for (auto key : keys)
         tree.insert(key);
-
 
     for (int q_beg = 0, q_end = queries.size(); q_beg != q_end; ++q_beg)
     {
@@ -114,6 +114,10 @@ opt_t Get_options(int argc, char** argv)
 
             case 'C':
                 opt_checker |= C_KEY;
+                    return opt_checker;
+
+            case 'D':
+                opt_checker |= D_KEY;
                     return opt_checker;
 
             case -1:

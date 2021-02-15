@@ -16,7 +16,6 @@ int main(int argc, char** argv)
 
     opt_t option = Get_options(argc, argv);
 
-
     cout << "This program exist for comparing two tree realisation!\n\n";
 
     int num_of_keys = 0, num_of_qs = 0;
