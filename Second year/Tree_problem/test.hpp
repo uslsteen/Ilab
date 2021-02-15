@@ -84,7 +84,7 @@ std::vector<int> Tree_testing(Tree& tree, std::vector<int>& keys, std::vector<qu
     }
 
     if (option == T_KEY)
-        std::cout << "Time elapsed: " << tmer.elapsed() << " msecs" << std::endl;
+        std::cout << "Time elapsed: " << tmer.elapsed() << " msecs\n" << std::endl;
 
     return res;
 }

@@ -20,21 +20,26 @@ namespace avl_tree
     {
 
     private:
+        struct Node;
+        struct Tree_it;
+
+    private:
         node::Node<Data_t>* root = nullptr;
         size_t size = 0;
 
         using double_iterator = std::pair<iter::iterator<Data_t>, bool>;
 
     public:
-
         Tree();
-        Tree(const Data_t& elem);
+        explicit Tree(const Data_t& elem);
+
+        Tree(const Tree& tree) = delete;
 
         ~Tree();
 
-        bool is_balanced();
+        [[nodiscard]] bool is_balanced() const;
 
-        unsigned int get_heigth();
+        [[nodiscard]] unsigned int get_heigth() const;
 
         //! Function for insertion elem into my avl_tree
         //! \param elem
@@ -44,21 +49,21 @@ namespace avl_tree
         //! Function for finding not less than elem in my avl tree
         //! \param elem
         //! \return iterator
-        iter::iterator<Data_t> lower_bound(Data_t& elem);
+        iter::iterator<Data_t> lower_bound(Data_t& elem) const;
 
         //! Function for getting begin to my avl_tree
         //! \return iterator
-        iter::iterator<Data_t> begin();
+        iter::iterator<Data_t> begin() const;
 
         //! Function for getting end to my avl_tree
         //! \return iterator
-        iter::iterator<Data_t> end();
+        iter::iterator<Data_t> end() const;
 
         //! Function - hepler for lower_bound(...)
         //! \param nde
         //! \param elem
         //! \return iterator
-        iter::iterator<Data_t> Find_not_less(node::Node<Data_t>* nde, Data_t& elem);
+        iter::iterator<Data_t> Find_not_less(node::Node<Data_t>* nde, Data_t& elem) const;
 
         //! Function for balance my avl_tree
         //! \param nde
@@ -68,21 +73,20 @@ namespace avl_tree
         //! Dump my avl_tree to png format
         //! \param dotname
         //! \param pngname
-        void Tree_dump(const std::string& dotname, const std::string& pngname);
+        void Tree_dump(const std::string& dotname, const std::string& pngname) const;
 
+        Tree& operator=(const Tree& rhs) = delete;
     };
 
-
     template <typename Data_t>
-    Tree<Data_t>::Tree() :                   size(0),
-                                             root(nullptr)
-    {}
+    Tree<Data_t>::Tree() {}
 
-    //! Simple constructor of class Tree
+    //! Constructor of class Tree
     template <typename Data_t>
     Tree<Data_t>::Tree(const Data_t& elem) : size(1),
                                              root(new node::Node<Data_t>(elem))
     {}
+
 
     //! Destructor of class Tree without recoursion
     template <typename Data_t>
@@ -99,25 +103,25 @@ namespace avl_tree
     }
 
     template <typename Data_t>
-    typename iter::iterator<Data_t> Tree<Data_t>::begin()
+    typename iter::iterator<Data_t> Tree<Data_t>::begin() const
     {
         return iter::iterator<Data_t>{root->min_node()};
     }
 
     template <typename Data_t>
-    typename iter::iterator<Data_t> Tree<Data_t>::end()
+    typename iter::iterator<Data_t> Tree<Data_t>::end() const
     {
         return iter::iterator<Data_t>{nullptr};
     }
 
     template <typename Data_t>
-    typename iter::iterator<Data_t> Tree<Data_t>::lower_bound(Data_t &elem)
+    typename iter::iterator<Data_t> Tree<Data_t>::lower_bound(Data_t &elem) const
     {
         return Find_not_less(root, elem);
     }
 
     template <typename Data_t>
-    typename iter::iterator<Data_t> Tree<Data_t>::Find_not_less(node::Node<Data_t>* nde, Data_t& elem)
+    typename iter::iterator<Data_t> Tree<Data_t>::Find_not_less(node::Node<Data_t>* nde, Data_t& elem) const
     {
         if (nde == nullptr)
             return iter::iterator<Data_t>{nullptr};
@@ -139,16 +143,18 @@ namespace avl_tree
         }
         else if (elem == nde->elem)
             return iter::iterator<Data_t>{nde};
+
+        return iter::iterator<Data_t>{nullptr};
     }
 
     template <typename Data_t>
-    bool Tree<Data_t>::is_balanced()
+    bool Tree<Data_t>::is_balanced() const
     {
         return (std::abs(root->balance_factor()) <= 1);
     }
 
     template <typename Data_t>
-    unsigned int Tree<Data_t>::get_heigth()
+    unsigned int Tree<Data_t>::get_heigth() const
     {
         return root->height;
     }
@@ -248,7 +254,7 @@ namespace avl_tree
 
 
     template <typename Data_t>
-    void Tree<Data_t>::Tree_dump(const std::string& dotname, const std::string& pngname)
+    void Tree<Data_t>::Tree_dump(const std::string& dotname, const std::string& pngname) const
     {
         std::ofstream fout;
         fout.open(dotname, std::ios::out);

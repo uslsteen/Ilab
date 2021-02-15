@@ -26,7 +26,7 @@ namespace avl_tree::node
 
     public:
 
-        explicit Node(Data_t& elem_) : elem(elem_)
+        Node(Data_t& elem_) : elem(elem_)
         {}
 
         Node(Data_t& elem_, Node* left_, Node* right_, Node* parent_, Node* next_, Node* prev_) : elem(elem_),
@@ -42,11 +42,11 @@ namespace avl_tree::node
 
 
         //! Function for fixing new heigth of subtree
-        int correct_heigth();
+        void correct_heigth();
 
         //! Function for getting heigth of left and rigth subtree of node
         //! This function useful for creating AVL - Tree
-        int balance_factor();
+        int balance_factor() const;
 
 
         void set_parent(Node* parent);
@@ -67,12 +67,12 @@ namespace avl_tree::node
         //! Function for finding node with max elem
         Node* max_node();
 
-        void Node_dump(std::ofstream& out);
+        void Node_dump(std::ofstream& out) const;
 
     };
 
     template <typename Data_t>
-    int Node<Data_t>::correct_heigth()
+    void Node<Data_t>::correct_heigth()
     {
         int r_hgth = (right != nullptr) ? right->height : 0;
         int l_hgth = (left != nullptr) ? left->height : 0;
@@ -81,7 +81,7 @@ namespace avl_tree::node
     }
 
     template <typename Data_t>
-    int Node<Data_t>::balance_factor()
+    int Node<Data_t>::balance_factor() const
     {
         int r_hgth = (right != nullptr) ? right->height : 0;
         int l_hgth = (left != nullptr) ? left->height : 0;
@@ -203,7 +203,7 @@ namespace avl_tree::node
     {
         auto cur_node = this;
 
-        while (cur_node != nullptr)
+        while (cur_node->right != nullptr)
             cur_node = cur_node->right;
 
         return cur_node;
@@ -215,14 +215,14 @@ namespace avl_tree::node
     {
         auto cur_node = this;
 
-        while (cur_node != nullptr)
+        while (cur_node->left != nullptr)
             cur_node = cur_node->left;
 
         return cur_node;
     }
 
     template <typename Data_t>
-    void Node<Data_t>::Node_dump(std::ofstream& out)
+    void Node<Data_t>::Node_dump(std::ofstream& out) const
     {
         if (left != nullptr)
         {
