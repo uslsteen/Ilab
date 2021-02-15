@@ -1,2 +1,10 @@
-main:
-	g++ -Wall -Wextra main.cpp my_time.hpp test.hpp Tree.hpp Node.hpp Tree_iter.hpp -o mytree
+.PHONY: all
+
+RELEASE_OPTIONS = -O2
+WARNING_OPTIONS = -Wall -Wextra
+CXX = g++
+
+all: release
+
+release:
+	$(CXX) main.cpp $(WARNING_OPTIONS) $(RELEASE_OPTIONS) -o my_tree.o
