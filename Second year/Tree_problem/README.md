@@ -7,8 +7,8 @@ Program consist of three different modules: ```Tree.hpp```, ```Node.hpp```, ```T
 
 Usage ./my_tree.o
 
-| Options  | Result                     | 
+| Options  | Result                            | 
 | -------- |:---------------------------------:| 
 | -T       | Time comparing regime             | 
-| -C       | Qurities process comparing regime | 
+| -C       | Quiries process comparing regime  | 
 
