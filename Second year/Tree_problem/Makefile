@@ -7,4 +7,4 @@ CXX = g++
 all: release
 
 release:
-	$(CXX) main.cpp $(WARNING_OPTIONS) $(RELEASE_OPTIONS) -o my_tree.o
+	$(CXX) main.cpp $(WARNING_OPTIONS) $(RELEASE_OPTIONS) -o my_tree.out
