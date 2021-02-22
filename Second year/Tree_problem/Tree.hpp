@@ -34,6 +34,7 @@ namespace avl_tree
         explicit Tree(const Data_t& elem);
 
         Tree(const Tree& tree) = delete;
+        Tree(Tree&& tree) = delete;
 
         ~Tree();
 
@@ -76,6 +77,7 @@ namespace avl_tree
         void Tree_dump(const std::string& dotname, const std::string& pngname) const;
 
         Tree& operator=(const Tree& rhs) = delete;
+        Tree operator =(Tree&& rhs) = delete;
     };
 
     template <typename Data_t>
