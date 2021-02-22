@@ -44,7 +44,7 @@ int main(int argc, char** argv)
 
     if (option == C_KEY)
     {
-        for (auto res : res_vec2)
+        for (auto& res : res_vec2)
             cout << res << " ";
 
         cout << "\nThere is end testing of my_tree\n\n";
@@ -57,7 +57,7 @@ int main(int argc, char** argv)
 
     if (option == C_KEY)
     {
-        for (auto res : res_vec1)
+        for (auto& res : res_vec1)
             cout << res << " ";
 
         cout << "\nThere is end testing of std::set\n\n";

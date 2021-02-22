@@ -62,7 +62,7 @@ std::vector<int> Tree_testing(Tree& tree, std::vector<int>& keys, std::vector<qu
     Time::Timer tmer;
     std::vector<int> res(queries.size());
 
-    for (auto key : keys)
+    for (auto& key : keys)
         tree.insert(key);
 
     for (int q_beg = 0, q_end = queries.size(); q_beg != q_end; ++q_beg)
