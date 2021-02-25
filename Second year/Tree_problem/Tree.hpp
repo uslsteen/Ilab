@@ -18,22 +18,19 @@ namespace avl_tree
     template <typename Data_t>
     class Tree final
     {
-
-    private:
-        struct Node;
-        struct Tree_it;
-
     private:
         node::Node<Data_t>* root = nullptr;
         size_t size = 0;
 
         using double_iterator = std::pair<iter::iterator<Data_t>, bool>;
 
+        enum INSERT_SIDE{ LEFT, RIGHT };
+
     public:
         Tree();
         explicit Tree(const Data_t& elem);
 
-        Tree(const Tree& tree) = delete;
+        Tree(const Tree& tree);
         Tree(Tree&& tree) = delete;
 
         ~Tree();
@@ -76,8 +73,11 @@ namespace avl_tree
         //! \param pngname
         void Tree_dump(const std::string& dotname, const std::string& pngname) const;
 
+
         Tree& operator=(const Tree& rhs) = delete;
         Tree operator =(Tree&& rhs) = delete;
+
+        void Insert_helper_func(INSERT_SIDE side, Data_t& elem, node::Node <Data_t>** cur, double_iterator &res);
     };
 
     template <typename Data_t>
@@ -89,6 +89,51 @@ namespace avl_tree
                                              root(new node::Node<Data_t>(elem))
     {}
 
+
+    template <typename Data_t>
+    Tree<Data_t>::Tree(const Tree<Data_t>& tree) : size(tree.size)
+
+    {
+        root = node::Node<Data_t>{tree.root->elem, nullptr, nullptr, nullptr};
+        node::Node<Data_t>* tree_cur = tree.root, * cur = root;
+
+        while(tree_cur != nullptr)
+        {
+            if (tree_cur->left != nullptr)
+                cur->left = node::Node<Data_t>{cur->left->elem, nullptr, nullptr, cur};
+
+            else if (tree_cur->right != nullptr)
+                cur->right = node::Node<Data_t>{cur->right->elem, nullptr, nullptr, cur};
+
+            if (tree_cur->left == nullptr)
+            {
+                tree_cur = tree_cur->right;
+                cur = cur->right;
+            }
+            else
+            {
+                tree_cur = tree_cur->left;
+                cur = cur->left;
+            }
+        }
+    }
+
+    /*
+    //! Copy constructor for class Matrix
+    Matrix(const Matrix<Data>& rhs) : rows(rhs.rows),
+                                      clmns(rhs.clmns)
+    {
+        matrix = new Data* [rhs.rows];
+
+        for (size_t i = 0; i < rhs.rows; ++i)
+        {
+            matrix[i] = new Data [rhs.clmns];
+
+            for (size_t j = 0; j < rhs.clmns; ++j)
+                matrix[i][j] = rhs.matrix[i][j];
+        }
+    }
+     */
 
     //! Destructor of class Tree without recoursion
     template <typename Data_t>
@@ -176,6 +221,40 @@ namespace avl_tree
 
 
     template <typename Data_t>
+    void Tree<Data_t>::Insert_helper_func(Tree<Data_t>::INSERT_SIDE side, Data_t& elem, node::Node<Data_t>** cur, double_iterator& res)
+    {
+        node::Node<Data_t>* new_child;
+
+        if (side == RIGHT)
+        {
+            new_child = new node::Node<Data_t>{elem, nullptr, nullptr, *cur, (*cur)->next, (*cur)};
+            (*cur)->right = new_child;
+
+            //! Checking for other node after cur
+            if ((*cur)->next != nullptr)
+                (*cur)->next->prev = new_child;
+            //! By the way, we should retie cur->next to new_r_child in the end
+            (*cur)->next = new_child;
+
+        }
+        else if (side == LEFT)
+        {
+            new_child = new node::Node<Data_t>{elem, nullptr, nullptr, *cur, (*cur), (*cur)->prev};
+            (*cur)->left = new_child;
+
+            if ((*cur)->prev != nullptr)
+                (*cur)->prev->next = new_child;
+
+            (*cur)->prev = new_child;
+        }
+
+        ++size;
+        res.first = new_child;
+        (*cur)->correct_heigth();
+    }
+
+
+    template <typename Data_t>
     typename Tree<Data_t>::double_iterator Tree<Data_t>::insert(Data_t& elem)
     {
         double_iterator res{iter::iterator<Data_t>{nullptr}, false};
@@ -200,21 +279,7 @@ namespace avl_tree
                     if (cur->right == nullptr)
                     {
                         //! Creating new rigth child
-                        node::Node<Data_t>* new_r_child = cur->right;
-
-                        new_r_child = new node::Node<Data_t>{elem, nullptr, nullptr, cur, cur->next, cur};
-                        cur->right = new_r_child;
-
-                        //! Checking for other node after cur
-                        if (cur->next != nullptr)
-                            cur->next->prev = new_r_child;
-
-                        //! By the way, we should retie cur->next to new_r_child in the end
-                        cur->next = new_r_child;
-
-                        ++size;
-                        res.first = new_r_child;
-                        cur->correct_heigth();
+                        Insert_helper_func(RIGHT, elem, &cur, res);
 
                         break;
                     }
@@ -225,20 +290,7 @@ namespace avl_tree
                     if (cur->left == nullptr)
                     {
                         //! Creating new left child
-                        node::Node<Data_t>* new_l_child = cur->left;
-
-                        new_l_child = new node::Node<Data_t>{elem, nullptr, nullptr, cur, cur, cur->prev};
-                        cur->left = new_l_child;
-
-                        if (cur->prev != nullptr)
-                            cur->prev->next = new_l_child;
-
-                        cur->prev = new_l_child;
-
-                        ++size;
-                        res.first = new_l_child;
-                        cur->correct_heigth();
-
+                        Insert_helper_func(LEFT, elem, &cur, res);
                         break;
                     }
                     else cur = cur->left;
