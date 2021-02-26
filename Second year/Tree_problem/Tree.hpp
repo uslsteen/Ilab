@@ -79,11 +79,19 @@ namespace avl_tree
         void Tree_dump(const std::string& dotname, const std::string& pngname) const;
 
 
-        Tree& operator=(const Tree& rhs) = delete;
+        Tree& operator=(const Tree& rhs)
+        {
+            Tree<Data_t> tmp(rhs);
+            this = rhs;
+
+            return *(this);
+        }
+        
         Tree operator =(Tree&& rhs) = delete;
 
         void Insert_helper_func(INSERT_SIDE side, Data_t& elem, node::Node <Data_t>** cur, double_iterator &res);
     };
+
 
     template <typename Data_t>
     Tree<Data_t>::Tree() {}
