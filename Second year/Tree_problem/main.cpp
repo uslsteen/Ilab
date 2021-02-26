@@ -3,8 +3,11 @@
 #include "Tree.hpp"
 
 
-std::string dotname = "tree14.dot";
-std::string pngname = "tree14.png";
+std::string dotname_orig = "tree_orig.dot";
+std::string pngname_orig = "tree_orig.png";
+
+std::string dotname_cpy = "tree_cpy.dot";
+std::string pngname_cpy = "tree_cpy.png";
 
 int main(int argc, char** argv)
 {
@@ -50,6 +53,7 @@ int main(int argc, char** argv)
         cout << "\nThere is end testing of my_tree\n\n";
     }
 
+    avl_tree::Tree<int> cpy_my_tree(my_tree);
 
     std::set<int> std_tree;
     cout << "There is start testing of std::set!\n";
@@ -64,7 +68,8 @@ int main(int argc, char** argv)
     }
 
 
-    //my_tree.Tree_dump(dotname, pngname);
+    my_tree.Tree_dump(dotname_orig, pngname_orig);
+    cpy_my_tree.Tree_dump(dotname_cpy, pngname_cpy);
 
     return 0;
 }

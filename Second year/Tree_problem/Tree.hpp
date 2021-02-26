@@ -35,6 +35,11 @@ namespace avl_tree
 
         ~Tree();
 
+        size_t get_size()
+        {
+            return size;
+        }
+
         [[nodiscard]] bool is_balanced() const;
 
         [[nodiscard]] unsigned int get_heigth() const;
@@ -91,49 +96,26 @@ namespace avl_tree
 
 
     template <typename Data_t>
-    Tree<Data_t>::Tree(const Tree<Data_t>& tree) : size(tree.size)
-
+    Tree<Data_t>::Tree(const Tree<Data_t>& tree)
     {
-        root = node::Node<Data_t>{tree.root->elem, nullptr, nullptr, nullptr};
-        node::Node<Data_t>* tree_cur = tree.root, * cur = root;
+        //node::Node<Data_t>* cur = root;
 
-        while(tree_cur != nullptr)
+        if (tree.root != nullptr)
         {
-            if (tree_cur->left != nullptr)
-                cur->left = node::Node<Data_t>{cur->left->elem, nullptr, nullptr, cur};
+            std::vector<iter::iterator<Data_t>> buf;
+            buf.reserve(tree.size);
 
-            else if (tree_cur->right != nullptr)
-                cur->right = node::Node<Data_t>{cur->right->elem, nullptr, nullptr, cur};
+            for (iter::iterator<Data_t> iter = tree.begin(); iter != tree.end(); ++iter)
+                buf.push_back(iter);
 
-            if (tree_cur->left == nullptr)
-            {
-                tree_cur = tree_cur->right;
-                cur = cur->right;
-            }
-            else
-            {
-                tree_cur = tree_cur->left;
-                cur = cur->left;
-            }
+            //iter::iterator<Data_t> cur = begin();
+            for (size_t i = 0; i < tree.size; ++i)
+                insert(buf[i].nde_it->elem);
         }
+
     }
 
-    /*
-    //! Copy constructor for class Matrix
-    Matrix(const Matrix<Data>& rhs) : rows(rhs.rows),
-                                      clmns(rhs.clmns)
-    {
-        matrix = new Data* [rhs.rows];
 
-        for (size_t i = 0; i < rhs.rows; ++i)
-        {
-            matrix[i] = new Data [rhs.clmns];
-
-            for (size_t j = 0; j < rhs.clmns; ++j)
-                matrix[i][j] = rhs.matrix[i][j];
-        }
-    }
-     */
 
     //! Destructor of class Tree without recoursion
     template <typename Data_t>
@@ -205,8 +187,6 @@ namespace avl_tree
     {
         return root->height;
     }
-
-
 
     template <typename Data_t>
     void Tree<Data_t>::Balance_tree(node::Node<Data_t>** nde, node::Node<Data_t>** root)
