@@ -11,6 +11,9 @@ std::string pngname_cpy = "tree_cpy.png";
 std::string dotname_asgn = "tree_asgn.dot";
 std::string pngname_asgn = "tree_asgn.png";
 
+std::string dotname_move = "tree_move.dot";
+std::string pngname_move = "tree_move.png";
+
 
 int main()
 {
@@ -47,6 +50,7 @@ int main()
     avl_tree::Tree<int> cpy_my_tree(my_tree);
     avl_tree::Tree<int> asgn_tree = my_tree;
 
+
     std::set<int> std_tree;
     cout << "There is start testing of std::set!\n";
     vector<int> res_vec1 = Tree_testing(std_tree, keys, queries);
@@ -58,13 +62,10 @@ int main()
     cout << "\nThere is end testing of std::set\n\n";
 
 
-    //if (option == D_KEY)
-    //{
-        my_tree.Tree_dump(dotname_orig, pngname_orig);
-        cpy_my_tree.Tree_dump(dotname_cpy, pngname_cpy);
-        asgn_tree.Tree_dump)(dotname_asgn, pngname_asgn);
-    //}
-
+    my_tree.Tree_dump(dotname_orig, pngname_orig);
+    cpy_my_tree.Tree_dump(dotname_cpy, pngname_cpy);
+    asgn_tree.Tree_dump(dotname_asgn, pngname_asgn);
+    mve_tree.Tree_dump(dotname_move, pngname_move);
 
     return 0;
 }

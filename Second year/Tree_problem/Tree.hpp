@@ -31,7 +31,7 @@ namespace avl_tree
         explicit Tree(const Data_t& elem);
 
         Tree(const Tree& tree);
-        Tree(Tree&& tree) = delete;
+        Tree(Tree&& tree) noexcept;
 
         ~Tree();
 
@@ -78,6 +78,9 @@ namespace avl_tree
         //! \param pngname
         void Tree_dump(const std::string& dotname, const std::string& pngname) const;
 
+        //! Copy assignment operator
+        //! \param rhs
+        //! \return tree reference
 
         Tree& operator=(const Tree& rhs)
         {
@@ -86,8 +89,25 @@ namespace avl_tree
 
             return *(this);
         }
-        
-        Tree operator =(Tree&& rhs) = delete;
+
+        //!  Move assignment operator
+        //! \param other_tree
+        //! \return tree reference
+        Tree& operator=(Tree&& other_tree) noexcept
+        {
+            if (this != &other_tree)
+            {
+                delete root;
+
+
+                root = other_tree.root;
+                size = other_tree.size;
+
+                other_tree.root = nullptr;
+                other_tree.size = 0;
+            }
+            return *this;
+        }
 
         void Insert_helper_func(INSERT_SIDE side, Data_t& elem, node::Node <Data_t>** cur, double_iterator &res);
     };
@@ -103,26 +123,42 @@ namespace avl_tree
     {}
 
 
+    //! Copy-ctor for my tree
     template <typename Data_t>
-    Tree<Data_t>::Tree(const Tree<Data_t>& tree)
+    Tree<Data_t>::Tree(const Tree<Data_t>& other_tree)
     {
         //node::Node<Data_t>* cur = root;
 
-        if (tree.root != nullptr)
+        if (other_tree.root != nullptr)
         {
             std::vector<iter::iterator<Data_t>> buf;
-            buf.reserve(tree.size);
+            buf.reserve(other_tree.size);
 
-            for (iter::iterator<Data_t> iter = tree.begin(); iter != tree.end(); ++iter)
+            for (iter::iterator<Data_t> iter = other_tree.begin(); iter != other_tree.end(); ++iter)
                 buf.push_back(iter);
 
             //iter::iterator<Data_t> cur = begin();
-            for (size_t i = 0; i < tree.size; ++i)
+            for (size_t i = 0; i < other_tree.size; ++i)
                 insert(buf[i].nde_it->elem);
         }
 
     }
 
+    //! Move-ctor for my tree
+    template <typename Data_t>
+    Tree<Data_t>::Tree(Tree<Data_t>&& other_tree) noexcept
+    : root(nullptr),
+      size(0)
+    {
+        std::cout << "Move constructor is used!\n";
+
+        // Copy the data pointer and its length from the
+        root = other_tree.root;
+        size = other_tree;
+
+        other_tree.root = nullptr;
+        other_tree.size = 0;
+    }
 
 
     //! Destructor of class Tree without recoursion
