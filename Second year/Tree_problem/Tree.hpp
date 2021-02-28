@@ -12,9 +12,11 @@
 
 /*       main conception of AVL tree      */
 
-namespace avl_tree {
+namespace avl_tree
+{
     template<typename Data_t>
-    class Tree final {
+    class Tree final
+    {
 
     private:
         struct Node;
@@ -27,7 +29,8 @@ namespace avl_tree {
 
         using double_iterator = std::pair<iterator, bool>;
 
-        enum INSERT_SIDE {
+        enum INSERT_SIDE
+        {
             LEFT, RIGHT
         };
 
@@ -42,9 +45,7 @@ namespace avl_tree {
 
         ~Tree();
 
-        size_t get_size() {
-            return size;
-        }
+        size_t get_size() { return size; }
 
         [[nodiscard]] bool is_balanced() const;
 
@@ -88,7 +89,8 @@ namespace avl_tree {
         //! \param rhs
         //! \return tree reference
 
-        Tree &operator=(const Tree &rhs) {
+        Tree &operator=(const Tree &rhs)
+        {
             Tree<Data_t> tmp(rhs);
             this = rhs;
 
@@ -98,8 +100,10 @@ namespace avl_tree {
         //!  Move assignment operator
         //! \param other_tree
         //! \return tree reference
-        Tree &operator=(Tree &&other_tree) noexcept {
-            if (this != &other_tree) {
+        Tree &operator=(Tree &&other_tree) noexcept
+                {
+            if (this != &other_tree)
+            {
                 delete root;
 
                 root = other_tree.root;
@@ -115,7 +119,8 @@ namespace avl_tree {
 
 
     private:
-        struct Node final {
+        struct Node final
+        {
             //private:
             Data_t elem = 0;
 
@@ -132,7 +137,6 @@ namespace avl_tree {
 
 
         public:
-
             Node(Data_t &elem_) : elem(elem_) {}
 
             Node(Data_t &elem_, Node *left_, Node *right_, Node *parent_, Node *next_, Node *prev_) : elem(elem_),
@@ -144,13 +148,16 @@ namespace avl_tree {
                 correct_heigth();
             }
 
-            Node(Data_t &elem_, Node *left_, Node *right_, Node *parent_) {
+#if 0
+            Node(Data_t &elem_, Node *left_, Node *right_, Node *parent_)
+            {
                 elem = elem_;
                 left = left_;
                 right = right_;
                 parent = parent_;
                 correct_heigth();
             }
+#endif
 
 
             //! Function for fixing new heigth of subtree
@@ -196,28 +203,35 @@ namespace avl_tree {
             /* Copy constructor for iterator */
             iterator(const iterator &it) : nde_it(it.nde_it) {}
 
-            /* Reloading operator for iterator */
-            iterator &operator=(const iterator &it) {
+
+            /* Reloading operators for iterator */
+            
+            iterator &operator=(const iterator &it)
+            {
                 nde_it = it.nde_it;
                 return *this;
             }
 
-            Data_t operator*() const {
+            Data_t operator*() const
+            {
                 return nde_it->elem;
             }
 
-            bool operator==(const iterator &it) const {
+            bool operator==(const iterator &it) const
+            {
                 if (nde_it == it.nde_it)
                     return true;
 
                 else return false;
             }
 
-            bool operator!=(const iterator &it) const {
+            bool operator!=(const iterator &it) const
+            {
                 return !(operator==(it));
             }
 
-            iterator &operator++() {
+            iterator &operator++()
+            {
                 nde_it = nde_it->next;
                 return *(this);
             }
@@ -241,7 +255,8 @@ namespace avl_tree {
     {
         //Node* cur = root;
 
-        if (other_tree.root != nullptr) {
+        if (other_tree.root != nullptr)
+        {
             std::vector<iterator> buf;
             buf.reserve(other_tree.size);
 
@@ -367,7 +382,7 @@ namespace avl_tree {
     void
     Tree<Data_t>::Insert_helper_func(Tree<Data_t>::INSERT_SIDE side, Data_t &elem, Node **cur, double_iterator &res)
     {
-        Node *new_child;
+        Node* new_child;
 
         if (side == RIGHT)
         {
