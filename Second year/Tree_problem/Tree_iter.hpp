@@ -32,12 +32,12 @@ namespace avl_tree::iter
             return *this;
         }
 
-        Data_t operator *()
+        Data_t operator *() const
         {
             return nde_it->elem;
         }
 
-        bool operator ==(const iterator& it)
+        bool operator ==(const iterator& it) const
         {
             if (nde_it == it.nde_it)
                 return true;
@@ -45,7 +45,7 @@ namespace avl_tree::iter
             else return false;
         }
 
-        bool operator !=(const iterator& it)
+        bool operator !=(const iterator& it) const
         {
             return !(operator==(it));
         }

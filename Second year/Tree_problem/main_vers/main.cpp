@@ -1,7 +1,7 @@
 #include "../test.hpp"
 #include "../Tree.hpp"
 
-
+#if 0
 std::string dotname_orig = "tree_orig.dot";
 std::string pngname_orig = "tree_orig.png";
 
@@ -13,7 +13,7 @@ std::string pngname_asgn = "tree_asgn.png";
 
 std::string dotname_move = "tree_move.dot";
 std::string pngname_move = "tree_move.png";
-
+#endif
 
 int main()
 {
@@ -61,11 +61,12 @@ int main()
 
     cout << "\nThere is end testing of std::set\n\n";
 
-
+#if 0
     my_tree.Tree_dump(dotname_orig, pngname_orig);
     cpy_my_tree.Tree_dump(dotname_cpy, pngname_cpy);
     asgn_tree.Tree_dump(dotname_asgn, pngname_asgn);
     mve_tree.Tree_dump(dotname_move, pngname_move);
+#endif
 
     return 0;
 }

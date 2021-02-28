@@ -12,6 +12,7 @@ namespace avl_tree::node
     template <typename Data_t>
     struct Node final
     {
+    //private:
         Data_t elem = 0;
 
         Node* left = nullptr;
@@ -19,10 +20,12 @@ namespace avl_tree::node
 
         Node* parent = nullptr;
 
+
         Node* next = nullptr;
         Node* prev = nullptr;
 
         unsigned int height = 0;
+
 
     public:
 
@@ -37,6 +40,15 @@ namespace avl_tree::node
                                                                                                   prev(prev_)
 
         {
+            correct_heigth();
+        }
+
+        Node(Data_t& elem_, Node* left_, Node* right_, Node* parent_)
+        {
+            elem = elem_;
+            left = left_;
+            right = right_;
+            parent = parent_;
             correct_heigth();
         }
 
