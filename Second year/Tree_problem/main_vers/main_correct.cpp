@@ -34,7 +34,7 @@ int main()
     avl_tree::Tree<int> my_tree;
 
     cout << "There is start testing of my tree!\n";
-    vector<int> res_vec2 = Tree_testing(my_tree, keys, queries, MODE::CORRECT);
+    vector<int> res_vec2 = Tree_testing(my_tree, keys, queries, CORRECT);
 
     for (auto& res : res_vec2)
         cout << res << " ";
@@ -44,7 +44,7 @@ int main()
 
     std::set<int> std_tree;
     cout << "There is start testing of std::set!\n";
-    vector<int> res_vec1 = Tree_testing(std_tree, keys, queries, MODE::CORRECT);
+    vector<int> res_vec1 = Tree_testing(std_tree, keys, queries, CORRECT);
 
     for (auto& res : res_vec1)
         cout << res << " ";

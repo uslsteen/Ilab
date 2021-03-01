@@ -29,6 +29,12 @@ typedef struct option OPT;
 #define C_KEY 0x2
 #define D_KEY 0x4
 
+enum MODE
+{
+    FULL,
+    TIME,
+    CORRECT
+};
 
 enum
 {
@@ -57,9 +63,11 @@ struct queries_t
 
 
 template <typename Tree>
-std::vector<int> Tree_testing(Tree& tree, std::vector<int>& keys, std::vector<queries_t>& queries, opt_t option)
+std::vector<int> Tree_testing(Tree& tree, std::vector<int>& keys, std::vector<queries_t>& queries, enum MODE mode)
 {
+
     Time::Timer tmer;
+
     std::vector<int> res(queries.size());
 
     for (auto& key : keys)
@@ -83,7 +91,7 @@ std::vector<int> Tree_testing(Tree& tree, std::vector<int>& keys, std::vector<qu
         res[q_beg] = cnter;
     }
 
-    if (option == T_KEY)
+    if (mode == FULL || mode == TIME)
         std::cout << "Time elapsed: " << tmer.elapsed() << " msecs\n" << std::endl;
 
     return res;
