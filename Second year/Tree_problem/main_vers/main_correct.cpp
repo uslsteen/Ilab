@@ -34,28 +34,21 @@ int main()
     avl_tree::Tree<int> my_tree;
 
     cout << "There is start testing of my tree!\n";
-    vector<int> res_vec2 = Tree_testing(my_tree, keys, queries, CORRECT);
+    vector<int> res_vec2 = Tree_testing(my_tree, keys, queries, MODE::CORRECT);
 
     for (auto& res : res_vec2)
         cout << res << " ";
 
     cout << "\nThere is end testing of my_tree\n\n";
 
-
     std::set<int> std_tree;
     cout << "There is start testing of std::set!\n";
-    vector<int> res_vec1 = Tree_testing(std_tree, keys, queries, CORRECT);
+    vector<int> res_vec1 = Tree_testing(std_tree, keys, queries, MODE::CORRECT);
 
     for (auto& res : res_vec1)
         cout << res << " ";
 
     cout << "\nThere is end testing of std::set\n\n";
-
-
-#if 0
-    my_tree.Tree_dump(dotname_orig, pngname_orig);
-    cpy_my_tree.Tree_dump(dotname_cpy, pngname_cpy);
-#endif
 
     return 0;
 }

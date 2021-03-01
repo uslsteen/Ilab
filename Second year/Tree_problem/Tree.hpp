@@ -8,37 +8,44 @@
 
 #include <fstream>
 #include <iostream>
-#include "Tree_iter.hpp"
 
 
 /*       main conception of AVL tree      */
 
 namespace avl_tree
 {
-    template <typename Data_t>
+    template<typename Data_t>
     class Tree final
     {
+
     private:
-        node::Node<Data_t>* root = nullptr;
+        struct Node;
+        struct iterator;
+
+    private:
+
+        Node *root = nullptr;
         size_t size = 0;
 
-        using double_iterator = std::pair<iter::iterator<Data_t>, bool>;
+        using double_iterator = std::pair<iterator, bool>;
 
-        enum INSERT_SIDE{ LEFT, RIGHT };
+        enum INSERT_SIDE
+        {
+            LEFT, RIGHT
+        };
 
     public:
         Tree();
-        explicit Tree(const Data_t& elem);
 
-        Tree(const Tree& tree);
-        Tree(Tree&& tree) noexcept;
+        explicit Tree(const Data_t &elem);
+
+        Tree(const Tree &tree);
+
+        Tree(Tree &&tree) noexcept;
 
         ~Tree();
 
-        size_t get_size()
-        {
-            return size;
-        }
+        size_t get_size() { return size; }
 
         [[nodiscard]] bool is_balanced() const;
 
@@ -47,42 +54,42 @@ namespace avl_tree
         //! Function for insertion elem into my avl_tree
         //! \param elem
         //! \return double iterator
-        double_iterator insert(Data_t& elem);
+        double_iterator insert(Data_t &elem);
 
         //! Function for finding not less than elem in my avl tree
         //! \param elem
         //! \return iterator
-        iter::iterator<Data_t> lower_bound(Data_t& elem) const;
+        iterator lower_bound(Data_t &elem) const;
 
         //! Function for getting begin to my avl_tree
         //! \return iterator
-        iter::iterator<Data_t> begin() const;
+        iterator begin() const;
 
         //! Function for getting end to my avl_tree
         //! \return iterator
-        iter::iterator<Data_t> end() const;
+        iterator end() const;
 
         //! Function - hepler for lower_bound(...)
         //! \param nde
         //! \param elem
         //! \return iterator
-        iter::iterator<Data_t> Find_not_less(node::Node<Data_t>* nde, Data_t& elem) const;
+        iterator Find_not_less(Node *nde, Data_t &elem) const;
 
         //! Function for balance my avl_tree
         //! \param nde
         //! \param root
-        void Balance_tree(node::Node<Data_t>** nde, node::Node<Data_t>** root);
+        void Balance_tree(Node **nde, Node **root);
 
         //! Dump my avl_tree to png format
         //! \param dotname
         //! \param pngname
-        void Tree_dump(const std::string& dotname, const std::string& pngname) const;
+        void Tree_dump(const std::string &dotname, const std::string &pngname) const;
 
         //! Copy assignment operator
         //! \param rhs
         //! \return tree reference
 
-        Tree& operator=(const Tree& rhs)
+        Tree &operator=(const Tree &rhs)
         {
             Tree<Data_t> tmp(rhs);
             this = rhs;
@@ -93,12 +100,11 @@ namespace avl_tree
         //!  Move assignment operator
         //! \param other_tree
         //! \return tree reference
-        Tree& operator=(Tree&& other_tree) noexcept
-        {
+        Tree &operator=(Tree &&other_tree) noexcept
+                {
             if (this != &other_tree)
             {
                 delete root;
-
 
                 root = other_tree.root;
                 size = other_tree.size;
@@ -109,35 +115,155 @@ namespace avl_tree
             return *this;
         }
 
-        void Insert_helper_func(INSERT_SIDE side, Data_t& elem, node::Node <Data_t>** cur, double_iterator &res);
+        void Insert_helper_func(INSERT_SIDE side, Data_t &elem, Node **cur, double_iterator &res);
+
+
+    private:
+        struct Node final
+        {
+            //private:
+            Data_t elem = 0;
+
+            Node *left = nullptr;
+            Node *right = nullptr;
+
+            Node *parent = nullptr;
+
+
+            Node *next = nullptr;
+            Node *prev = nullptr;
+
+            unsigned int height = 0;
+
+
+        public:
+            Node(Data_t &elem_) : elem(elem_) {}
+
+            Node(Data_t &elem_, Node *left_, Node *right_, Node *parent_, Node *next_, Node *prev_) : elem(elem_),
+                                                                                                      left(left_),
+                                                                                                      right(right_),
+                                                                                                      parent(parent_),
+                                                                                                      next(next_),
+                                                                                                      prev(prev_) {
+                correct_heigth();
+            }
+
+#if 0
+            Node(Data_t &elem_, Node *left_, Node *right_, Node *parent_)
+            {
+                elem = elem_;
+                left = left_;
+                right = right_;
+                parent = parent_;
+                correct_heigth();
+            }
+#endif
+
+
+            //! Function for fixing new heigth of subtree
+            void correct_heigth();
+
+            //! Function for getting heigth of left and rigth subtree of node
+            //! This function useful for creating AVL - Tree
+            int balance_factor() const;
+
+
+            void set_parent(Node *parent);
+
+            void set_l_chld(Node *l_chld);
+
+            void set_r_chld(Node *r_chld);
+
+            //! Function for making a rigth rotate around the node
+            Node *right_rotate();
+
+            //! Function for making a rigth rotate around the node
+            Node *left_rotate();
+
+            //! Function for balance node this by defenition AVL - Tree
+            Node *balance_node();
+
+            //! Function for finding node with min elem
+            Node *min_node();
+
+            //! Function for finding node with max elem
+            Node *max_node();
+
+            void Node_dump(std::ofstream &out) const;
+        };
+
+        struct iterator final
+        {
+            Node *nde_it;
+
+        public:
+            /* Simple constructor */
+            iterator(Node *nde) : nde_it(nde) {}
+
+            /* Copy constructor for iterator */
+            iterator(const iterator &it) : nde_it(it.nde_it) {}
+
+
+            /* Reloading operators for iterator */
+            
+            iterator &operator=(const iterator &it)
+            {
+                nde_it = it.nde_it;
+                return *this;
+            }
+
+            Data_t operator*() const
+            {
+                return nde_it->elem;
+            }
+
+            bool operator==(const iterator &it) const
+            {
+                if (nde_it == it.nde_it)
+                    return true;
+
+                else return false;
+            }
+
+            bool operator!=(const iterator &it) const
+            {
+                return !(operator==(it));
+            }
+
+            iterator &operator++()
+            {
+                nde_it = nde_it->next;
+                return *(this);
+            }
+        };
+
     };
 
 
-    template <typename Data_t>
+    template<typename Data_t>
     Tree<Data_t>::Tree() {}
 
     //! Constructor of class Tree
-    template <typename Data_t>
-    Tree<Data_t>::Tree(const Data_t& elem) : size(1),
-                                             root(new node::Node<Data_t>(elem))
-    {}
+    template<typename Data_t>
+    Tree<Data_t>::Tree(const Data_t &elem) : size(1),
+                                             root(new Node(elem)) {}
 
 
     //! Copy-ctor for my tree
-    template <typename Data_t>
-    Tree<Data_t>::Tree(const Tree<Data_t>& other_tree)
+    template<typename Data_t>
+    Tree<Data_t>::Tree(const Tree<Data_t> &other_tree)
     {
-        //node::Node<Data_t>* cur = root;
+        //Node* cur = root;
 
         if (other_tree.root != nullptr)
         {
-            std::vector<iter::iterator<Data_t>> buf;
+            std::vector<iterator> buf;
             buf.reserve(other_tree.size);
 
-            for (iter::iterator<Data_t> iter = other_tree.begin(); iter != other_tree.end(); ++iter)
+            for (iterator iter = other_tree.begin(); iter != other_tree.end(); ++iter)
                 buf.push_back(iter);
 
-            //iter::iterator<Data_t> cur = begin();
+            //iterator cur = begin();
             for (size_t i = 0; i < other_tree.size; ++i)
                 insert(buf[i].nde_it->elem);
         }
@@ -145,10 +271,10 @@ namespace avl_tree
     }
 
     //! Move-ctor for my tree
-    template <typename Data_t>
-    Tree<Data_t>::Tree(Tree<Data_t>&& other_tree) noexcept
-    : root(nullptr),
-      size(0)
+    template<typename Data_t>
+    Tree<Data_t>::Tree(Tree<Data_t> &&other_tree) noexcept
+            : root(nullptr),
+              size(0)
     {
         std::cout << "Move constructor is used!\n";
 
@@ -162,10 +288,10 @@ namespace avl_tree
 
 
     //! Destructor of class Tree without recoursion
-    template <typename Data_t>
+    template<typename Data_t>
     Tree<Data_t>::~Tree()
     {
-        node::Node<Data_t>* cur = root->min_node(), *prev = nullptr;
+        Node *cur = root->min_node(), *prev = nullptr;
 
         while (cur != nullptr)
         {
@@ -175,65 +301,73 @@ namespace avl_tree
         }
     }
 
-    template <typename Data_t>
-    typename iter::iterator<Data_t> Tree<Data_t>::begin() const
+    //**********************************//        Next           //**********************************//
+    //**********************************//    There is methods   //**********************************//
+    //**********************************//     of structure      //**********************************//
+    //**********************************//                       //**********************************//
+    //**********************************//        TREE           //**********************************//
+    //**********************************//                       //**********************************//
+    //**********************************//                       //**********************************//
+
+    template<typename Data_t>
+    typename Tree<Data_t>::iterator Tree<Data_t>::begin() const
     {
-        return iter::iterator<Data_t>{root->min_node()};
+        return iterator{root->min_node()};
     }
 
-    template <typename Data_t>
-    typename iter::iterator<Data_t> Tree<Data_t>::end() const
+    template<typename Data_t>
+    typename Tree<Data_t>::iterator Tree<Data_t>::end() const
     {
-        return iter::iterator<Data_t>{nullptr};
+        return iterator{nullptr};
     }
 
-    template <typename Data_t>
-    typename iter::iterator<Data_t> Tree<Data_t>::lower_bound(Data_t &elem) const
+    template<typename Data_t>
+    typename Tree<Data_t>::iterator Tree<Data_t>::lower_bound(Data_t &elem) const
     {
         return Find_not_less(root, elem);
     }
 
-    template <typename Data_t>
-    typename iter::iterator<Data_t> Tree<Data_t>::Find_not_less(node::Node<Data_t>* nde, Data_t& elem) const
+    template<typename Data_t>
+    typename Tree<Data_t>::iterator Tree<Data_t>::Find_not_less(Node *nde, Data_t &elem) const
     {
         if (nde == nullptr)
-            return iter::iterator<Data_t>{nullptr};
+            return iterator{nullptr};
 
         //! Compare elem with nde->elem: chose the way
         if (elem < nde->elem)
         {
             if (nde->left == nullptr)
-                return iter::iterator<Data_t>{nde};
+                return iterator{nde};
 
             else return Find_not_less(nde->left, elem);
         }
         else if (elem > nde->elem)
         {
             if (nde->right == nullptr)
-                return ++iter::iterator<Data_t>{nde};
+                return ++iterator{nde};
 
             else return Find_not_less(nde->right, elem);
         }
         else if (elem == nde->elem)
-            return iter::iterator<Data_t>{nde};
+            return iterator{nde};
 
-        return iter::iterator<Data_t>{nullptr};
+        return iterator{nullptr};
     }
 
-    template <typename Data_t>
+    template<typename Data_t>
     bool Tree<Data_t>::is_balanced() const
     {
         return (std::abs(root->balance_factor()) <= 1);
     }
 
-    template <typename Data_t>
+    template<typename Data_t>
     unsigned int Tree<Data_t>::get_heigth() const
     {
         return root->height;
     }
 
-    template <typename Data_t>
-    void Tree<Data_t>::Balance_tree(node::Node<Data_t>** nde, node::Node<Data_t>** root)
+    template<typename Data_t>
+    void Tree<Data_t>::Balance_tree(Node **nde, Node **root)
     {
         while (*nde != *root)
         {
@@ -244,14 +378,15 @@ namespace avl_tree
     }
 
 
-    template <typename Data_t>
-    void Tree<Data_t>::Insert_helper_func(Tree<Data_t>::INSERT_SIDE side, Data_t& elem, node::Node<Data_t>** cur, double_iterator& res)
+    template<typename Data_t>
+    void
+    Tree<Data_t>::Insert_helper_func(Tree<Data_t>::INSERT_SIDE side, Data_t &elem, Node **cur, double_iterator &res)
     {
-        node::Node<Data_t>* new_child;
+        Node* new_child;
 
         if (side == RIGHT)
         {
-            new_child = new node::Node<Data_t>{elem, nullptr, nullptr, *cur, (*cur)->next, (*cur)};
+            new_child = new Node{elem, nullptr, nullptr, *cur, (*cur)->next, (*cur)};
             (*cur)->right = new_child;
 
             //! Checking for other node after cur
@@ -263,7 +398,7 @@ namespace avl_tree
         }
         else if (side == LEFT)
         {
-            new_child = new node::Node<Data_t>{elem, nullptr, nullptr, *cur, (*cur), (*cur)->prev};
+            new_child = new Node{elem, nullptr, nullptr, *cur, (*cur), (*cur)->prev};
             (*cur)->left = new_child;
 
             if ((*cur)->prev != nullptr)
@@ -278,24 +413,22 @@ namespace avl_tree
     }
 
 
-    template <typename Data_t>
-    typename Tree<Data_t>::double_iterator Tree<Data_t>::insert(Data_t& elem)
+    template<typename Data_t>
+    typename Tree<Data_t>::double_iterator Tree<Data_t>::insert(Data_t &elem)
     {
-        double_iterator res{iter::iterator<Data_t>{nullptr}, false};
+        double_iterator res{iterator{nullptr}, false};
         size_t old_size = size;
         //! If this insertion - first insertion
         if (size == 0)
         {
-            root = new node::Node<Data_t>{elem};
+            root = new Node{elem};
             ++size;
 
             res.first = root;
             res.second = true;
             return res;
-        }
-        else
-        {
-            node::Node<Data_t>* cur = root;
+        } else {
+            Node *cur = root;
             while (cur->elem != elem)
             {
                 if (elem > cur->elem)
@@ -331,8 +464,8 @@ namespace avl_tree
     }
 
 
-    template <typename Data_t>
-    void Tree<Data_t>::Tree_dump(const std::string& dotname, const std::string& pngname) const
+    template<typename Data_t>
+    void Tree<Data_t>::Tree_dump(const std::string &dotname, const std::string &pngname) const
     {
         std::ofstream fout;
         fout.open(dotname, std::ios::out);
@@ -355,7 +488,184 @@ namespace avl_tree
         system(promt.c_str());
     }
 
-    /*    Here I define methods for struct Node   */
+
+//**********************************//        Next           //**********************************//
+//**********************************//    There is methods   //**********************************//
+//**********************************//     of structure      //**********************************//
+//**********************************//                       //**********************************//
+//**********************************//        NODE           //**********************************//
+//**********************************//                       //**********************************//
+//**********************************//                       //**********************************//
+
+
+    template<typename Data_t>
+    void Tree<Data_t>::Node::correct_heigth()
+    {
+        int r_hgth = (right != nullptr) ? right->height : 0;
+        int l_hgth = (left != nullptr) ? left->height : 0;
+
+        height = (1 + std::max(r_hgth, l_hgth));
+    }
+
+    template<typename Data_t>
+    int Tree<Data_t>::Node::balance_factor() const
+    {
+        int r_hgth = (right != nullptr) ? right->height : 0;
+        int l_hgth = (left != nullptr) ? left->height : 0;
+
+        return r_hgth - l_hgth;
+    }
+
+
+    template<typename Data_t>
+    void Tree<Data_t>::Node::set_l_chld(Node *l_chld)
+    {
+        left = l_chld;
+
+        //! If l_chld exist, then we can
+        if (l_chld != nullptr)
+            l_chld->parent = this;
+
+        correct_heigth();
+    }
+
+    template<typename Data_t>
+    void Tree<Data_t>::Node::set_r_chld(Node *r_chld)
+    {
+        right = r_chld;
+
+        //! If r_chld exist, then we can
+        if (r_chld != nullptr)
+            r_chld->parent = this;
+
+        correct_heigth();
+    }
+
+
+    template<typename Data_t>
+    typename Tree<Data_t>::Node* Tree<Data_t>::Node::right_rotate()
+    {
+        Node *y = left;
+        y->set_parent(parent);
+
+        set_l_chld(y->right);   //old vers:: left = y->right;
+        y->set_r_chld(this);    //old vers:: y->right = this;
+
+        correct_heigth();
+        y->correct_heigth();
+
+        return y;
+    }
+
+    template<typename Data_t>
+    typename Tree<Data_t>::Node* Tree<Data_t>::Node::left_rotate()
+    {
+        Node *y = right;
+        y->set_parent(parent);
+
+        set_r_chld(y->left);  // old vers::  right = y->left;
+        y->set_l_chld(this);  // old vers::  y->left = this;
+
+        correct_heigth();
+        y->correct_heigth();
+
+        return y;
+    }
+
+    template<typename Data_t>
+    void Tree<Data_t>::Node::set_parent(Node *prnt)
+    {
+        parent = prnt;
+
+        if (prnt == nullptr)
+            return;
+
+        if (prnt->elem > elem)
+            prnt->left = this;
+
+        else if (prnt->elem < elem)
+            prnt->right = this;
+
+        //! Set height for new node
+        prnt->correct_heigth();
+    }
+
+
+    template<typename Data_t>
+    typename Tree<Data_t>::Node* Tree<Data_t>::Node::balance_node()
+    {
+        //! Refresh height
+        correct_heigth();
+
+        int b_factor = balance_factor();
+
+        if (b_factor == 2) {
+            if (right->balance_factor() < 0)
+            {
+                right = right->right_rotate();
+                correct_heigth();
+            }
+
+            return left_rotate();
+        }
+
+        if (b_factor == -2)
+        {
+            if (left->balance_factor() > 0)
+            {
+                left = left->left_rotate();
+                correct_heigth();
+            }
+
+            return right_rotate();
+        }
+
+        return this;
+    }
+
+    template<typename Data_t>
+    typename Tree<Data_t>::Node* Tree<Data_t>::Node::max_node()
+    {
+        auto cur_node = this;
+
+        while (cur_node->right != nullptr)
+            cur_node = cur_node->right;
+
+        return cur_node;
+    }
+
+
+    template<typename Data_t>
+    typename Tree<Data_t>::Node* Tree<Data_t>::Node::min_node()
+    {
+        auto cur_node = this;
+
+        while (cur_node->left != nullptr)
+            cur_node = cur_node->left;
+
+        return cur_node;
+    }
+
+    template<typename Data_t>
+    void Tree<Data_t>::Node::Node_dump(std::ofstream &out) const
+    {
+        if (left != nullptr)
+        {
+            out << elem << " -> " << left->elem << ";\n";
+            left->Node_dump(out);
+        }
+
+        if (right != nullptr)
+        {
+            out << elem << " -> " << right->elem << "\n";
+            right->Node_dump(out);
+        }
+
+        if (next != nullptr)
+            out << elem << " -> " << next->elem << "\n";
+
+        out << elem << ";\n";
+    }
 
 }
 

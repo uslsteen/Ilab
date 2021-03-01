@@ -24,12 +24,12 @@ int main()
     avl_tree::Tree<int> my_tree;
 
     cout << "There is start testing of my tree!\n";
-    vector<int> res_vec2 = Tree_testing(my_tree, keys, queries;
+    vector<int> res_vec2 = Tree_testing(my_tree, keys, queries, MODE::TIME);
 
 
     std::set<int> std_tree;
     cout << "There is start testing of std::set!\n";
-    vector<int> res_vec1 = Tree_testing(std_tree, keys, queries);
+    vector<int> res_vec1 = Tree_testing(std_tree, keys, queries, MODE::TIME);
 
     return 0;
 }
