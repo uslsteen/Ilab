@@ -92,7 +92,9 @@ namespace avl_tree
         Tree &operator=(const Tree &rhs)
         {
             Tree<Data_t> tmp(rhs);
-            this = rhs;
+
+            this->root = tmp.root;
+            this->size = tmp.size;
 
             return *(this);
         }

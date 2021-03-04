@@ -13,6 +13,9 @@
 #include <set>
 #include <ctime>
 #include <string>
+#include <deque>
+#include <map>
+
 
 #include <unistd.h>
 #include <getopt.h>
@@ -37,8 +40,12 @@ struct queries_t
 };
 
 
+#if 0
+using map_it = std::map<queries_t, bool>::iterator;
+#endif
+
 template <typename Tree>
-std::vector<int> Tree_testing(Tree& tree, std::vector<int>& keys, std::vector<queries_t>& queries, enum MODE mode = FULL)
+std::vector<int> Tree_testing(Tree& tree, std::vector<int>& keys, std::deque<queries_t>& queries, enum MODE mode = FULL)
 {
     Time::Timer tmer;
 

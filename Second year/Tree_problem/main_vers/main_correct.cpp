@@ -12,12 +12,12 @@
 
 int main()
 {
-    cout << "This program exist for comparing two tree realisation!\n\n";
-
-    int num_of_keys = 0, num_of_qs = 0;
+    int num_of_keys = 0, num_of_qs = 0, qs_first = 0, qs_second = 0;
 
     vector<int> keys;
-    vector<queries_t> queries;
+    std::deque<queries_t> queries; // i used std::deque, cause i want to push_back per O(1)
+
+    std::map<queries_t, bool> checking_table;
 
     cin >> num_of_keys;
     keys.resize(num_of_keys);
@@ -26,10 +26,32 @@ int main()
         cin >> keys[i];
 
     cin >> num_of_qs;
-    queries.resize(num_of_qs);
+
+#if 0
+    queries.resize(num_of_qs); // if queries were std::vector
+#endif
 
     for (int i = 0; i < num_of_qs; ++i)
-        cin >> queries[i].frst >> queries[i].scnd;
+    {
+        cin >> qs_first >> qs_second;
+        //auto check = checking_table.find({qs_first, qs_second});
+
+        //if (!check->second)
+        //{
+           // checking_table.insert({{qs_first, qs_second}, true});
+
+            if (qs_first < qs_second)
+                queries.push_back({qs_first, qs_second});
+        //}
+    }
+
+    if ((num_of_keys != keys.size()) || (num_of_qs != queries.size()))
+    {
+        std::cerr << "Invalid input!\n";
+        return 1;
+    }
+
+    cout << "This program exist for comparing two tree realisation!\n\n";
 
     avl_tree::Tree<int> my_tree;
 
@@ -49,6 +71,10 @@ int main()
         cout << res << " ";
 
     cout << "\nThere is end testing of std::set\n\n";
+
+    avl_tree::Tree<int> cpy_tree = my_tree;
+
+
 
     return 0;
 }
