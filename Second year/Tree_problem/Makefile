@@ -12,3 +12,6 @@ time:
 
 correct:
 	$(CXX) $(MAIN_DIR)/main_correct.cpp $(WARNING_OPTIONS) $(RELEASE_OPTIONS) -o tree_correct.out
+
+double_free:
+	$(CXX) $(MAIN_DIR)/double_free_test.cpp $(WARNING_OPTIONS) $(RELEASE_OPTIONS) -o dble_free.out
