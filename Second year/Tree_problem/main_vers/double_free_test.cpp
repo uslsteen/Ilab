@@ -37,10 +37,8 @@ int main()
 
     cout << "\nThere is end insertion in my trees\n\n";
 
-    //fst_tree = scnd_tree; // there is should be error;
     scnd_tree = fst_tree;
 
-    cout << "Is it end?\n";
 
     return 0;
 }

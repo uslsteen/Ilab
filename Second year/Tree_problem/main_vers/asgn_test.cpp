@@ -53,6 +53,6 @@ int main()
     avl_tree::Tree<int> copy_ctor_tester(fst_tree);
 
     swap(third_tree, scnd_tree);
-    
+
     return 0;
 }
