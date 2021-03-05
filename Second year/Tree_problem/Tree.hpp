@@ -61,6 +61,20 @@ namespace avl_tree
         //! \return iterator
         iterator lower_bound(Data_t &elem) const;
 
+        //! Function for clearing contents of my tree
+        void clear()
+        {
+            std::deque<Node*> items; // i used std::deque, cause i want to push_back per O(1) for next deleting
+
+            for (iterator iter = begin(); iter != end(); ++iter)
+                items.push_back(iter.nde_it);
+
+            for (auto& item: items)
+                delete item;
+
+            size = 0;
+        }
+
         //! Function for getting begin to my avl_tree
         //! \return iterator
         iterator begin() const;
@@ -88,22 +102,31 @@ namespace avl_tree
         //! Copy assignment operator
         //! \param rhs
         //! \return tree reference
-
-        Tree &operator=(const Tree &rhs)
+        Tree &operator=(const Tree &other_tree)
         {
-            Tree<Data_t> tmp(rhs);
+            clear();
 
-            this->root = tmp.root;
-            this->size = tmp.size;
+            if (other_tree.root != nullptr)
+            {
+                std::deque<iterator> buf; // i used std::deque, cause i want to push_back per O(1)
 
-            return *(this);
+                //buf.reserve(other_tree.size); // if i must return std::vector
+
+                for (iterator iter = other_tree.begin(); iter != other_tree.end(); ++iter)
+                    buf.push_back(iter);
+
+                for (size_t i = 0; i < other_tree.size; ++i)
+                    insert(buf[i].nde_it->elem);
+            }
+
+            return (*this);
         }
 
         //!  Move assignment operator
         //! \param other_tree
         //! \return tree reference
         Tree &operator=(Tree &&other_tree) noexcept
-                {
+        {
             if (this != &other_tree)
             {
                 delete root;
@@ -269,7 +292,6 @@ namespace avl_tree
             for (size_t i = 0; i < other_tree.size; ++i)
                 insert(buf[i].nde_it->elem);
         }
-
     }
 
     //! Move-ctor for my tree
@@ -278,7 +300,10 @@ namespace avl_tree
             : root(nullptr),
               size(0)
     {
+
+#if 0
         std::cout << "Move constructor is used!\n";
+#endif
 
         // Copy the data pointer and its length from the
         root = other_tree.root;
