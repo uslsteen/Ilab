@@ -30,7 +30,9 @@ int main()
     Input(keys2, num_of_keys2);
     Input(keys3, num_of_keys3);
 
+#if 0
     cout << "This program exist for test copy ctor and copy assgn!\n\n";
+#endif
 
     avl_tree::Tree<int> fst_tree;
     cout << "There is start testing of first tree!\n";
@@ -45,7 +47,7 @@ int main()
         scnd_tree.insert(key);
 
     avl_tree::Tree<int> third_tree;
-    cout << "There is start testing of second tree!\n";
+    cout << "There is start testing of third tree!\n";
 
     for (auto& key : keys3)
         third_tree.insert(key);

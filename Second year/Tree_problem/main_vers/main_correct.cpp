@@ -47,7 +47,7 @@ int main()
         std::cerr << "Invalid input!\n";
         return 1;
     }
-
+    
     cout << "This program exist for comparing two tree realisation!\n\n";
 
     avl_tree::Tree<int> my_tree;
@@ -58,7 +58,9 @@ int main()
     for (auto& res : res_vec2)
         cout << res << " ";
 
+#if 0
     cout << "\nThere is end testing of my_tree\n\n";
+#endif
 
     std::set<int> std_tree;
     cout << "There is start testing of std::set!\n";
@@ -67,11 +69,9 @@ int main()
     for (auto& res : res_vec1)
         cout << res << " ";
 
+#if 0
     cout << "\nThere is end testing of std::set\n\n";
-
-    avl_tree::Tree<int> cpy_tree = my_tree;
-
-
+#endif
 
     return 0;
 }
