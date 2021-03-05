@@ -15,3 +15,6 @@ correct:
 
 double_free:
 	$(CXX) $(MAIN_DIR)/double_free_test.cpp $(WARNING_OPTIONS) $(RELEASE_OPTIONS) -o dble_free.out
+
+asgn_test:
+	$(CXX) $(MAIN_DIR)/asgn_test.cpp $(WARNING_OPTIONS) $(RELEASE_OPTIONS) -o asgn_test.out
