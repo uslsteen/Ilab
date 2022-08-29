@@ -1,3 +1,0 @@
-/home/anon/Code/ilab/Second year/Matrix/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/anon/Code/ilab/Second year/Matrix/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/anon/Code/ilab/Second year/Matrix/cmake-build-debug/CMakeFiles/Matrix.dir
