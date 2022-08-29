@@ -1,1 +1,0 @@
-/usr/bin/g++  -g   CMakeFiles/Triangles_upd.dir/main.cpp.o  -o Triangles_upd 
